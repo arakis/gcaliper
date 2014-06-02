@@ -1,6 +1,25 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench />
+  <MonoDevelop.Ide.Workbench ActiveDocument="src/lib.cs">
+    <Files>
+      <File FileName="src/Program.cs" Line="1" Column="1" />
+      <File FileName="src/DrawGroup.cs" Line="26" Column="4" />
+      <File FileName="src/lib.cs" Line="9" Column="19" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State expanded="True">
+          <Option id="ShowAllFiles" value="True" />
+          <Node name="gcaliper" expanded="True">
+            <Node name="bin" expanded="True">
+              <Node name="Debug" expanded="True" />
+            </Node>
+            <Node name="lib.cs" selected="True" />
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>

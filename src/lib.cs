@@ -6,7 +6,7 @@ using Cairo;
 using System.Drawing;
 using POINT = System.Drawing.Point;
 
-namespace shapetest
+namespace gcaliper
 {
 	public static class funcs
 	{
@@ -229,7 +229,7 @@ namespace shapetest
 
 	public class TCaliperPart1 : TImagePart
 	{
-		public TCaliperPart1 () : base ("../../template/1.png")
+		public TCaliperPart1 () : base ("../../template/caliper/1.png")
 		{
 			rotate = true;
 		}
@@ -237,7 +237,7 @@ namespace shapetest
 
 	public class TCaliperPart2 : TImagePart
 	{
-		public TCaliperPart2 () : base ("../../template/2.png")
+		public TCaliperPart2 () : base ("../../template/caliper/2.png")
 		{
 			rotate = true;
 		}

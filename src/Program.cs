@@ -3,7 +3,7 @@ using Gtk;
 using Gdk;
 using Cairo;
 
-namespace shapetest
+namespace gcaliper
 {
 	class MainClass
 	{

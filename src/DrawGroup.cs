@@ -4,7 +4,7 @@ using Gtk;
 using Gdk;
 using Cairo;
 
-namespace shapetest
+namespace gcaliper
 {
 	public class TDrawGroup : Gtk.Window
 	{
