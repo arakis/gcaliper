@@ -5,6 +5,7 @@ using Gdk;
 using Cairo;
 using System.Drawing;
 using POINT = System.Drawing.Point;
+using RECT = System.Drawing.Rectangle;
 
 namespace gcaliper
 {
@@ -29,14 +30,34 @@ namespace gcaliper
 			return new PointF ((float)x, (float)y);
 		}
 
-		public static System.Drawing.Point rotatePoint (System.Drawing.Point p, System.Drawing.Point center, double angle)
+		public static POINT _rotatePoint (POINT p, POINT center, double angle)
 		{
 			var x = Math.Cos (angle) * (p.X - center.X) - Math.Sin (angle) * (p.Y - center.Y) + center.X;
 			var y = Math.Sin (angle) * (p.X - center.X) + Math.Cos (angle) * (p.Y - center.Y) + center.Y;
-			return new System.Drawing.Point ((int)Math.Round (x), (int)Math.Round (y));
+			return new POINT ((int)Math.Round (x), (int)Math.Round (y));
 		}
 
-		public static System.Drawing.Rectangle rotateRect (System.Drawing.Rectangle r, POINT center, double angle)
+		public static POINT  rotatePoint(POINT p, POINT center,double angle)
+		{
+			double s = Math.Sin(angle);
+			double c = Math.Cos(angle);
+
+			// translate point back to origin:
+			p.X -= center.X;
+			p.Y -= center.Y;
+
+			// rotate point
+			double xnew = p.X * c - p.Y * s;
+			double ynew = p.X * s + p.Y * c;
+
+			// translate point back:
+			p.X = (int)Math.Round(xnew + center.X);
+			p.Y = (int)Math.Round(ynew + center.Y);
+
+			return p;
+		}
+
+		public static RECT rotateRect (RECT r, POINT center, double angle)
 		{
 			var p1 = new POINT (r.Left, r.Top);
 			var p2 = new POINT (r.Right, r.Top);
@@ -54,7 +75,7 @@ namespace gcaliper
 			var top = Math.Min (r1.Y, Math.Min (r2.Y, Math.Min (r3.Y, r4.Y)));
 			var bottom = Math.Max (r1.Y, Math.Max (r2.Y, Math.Max (r3.Y, r4.Y)));
 
-			return new System.Drawing.Rectangle (left, top, right - left, bottom - top);
+			return new RECT (left, top, right - left, bottom - top);
 		}
 	}
 
@@ -212,8 +233,8 @@ namespace gcaliper
 	{
 		public ImageSurface image;
 		public bool rotate;
-		public PointD rotationCenter;
-		public double rotationAngle;
+		//public PointD rotationCenter;
+		//public double rotationAngle;
 		public System.Drawing.Rectangle rect;
 		//public System.Drawing.Rectangle rotatedRect;
 	}

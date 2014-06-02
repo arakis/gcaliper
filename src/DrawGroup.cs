@@ -10,30 +10,17 @@ namespace gcaliper
 {
 	public class TDrawGroup : Gtk.Window
 	{
-		//public Pixbuf maskBuf;
 		public Pixmap maskMap;
 		public ImageSurface image;
 		public TPartList parts = new TPartList ();
 
 		public TDrawGroup () : base (Gtk.WindowType.Toplevel)
 		{
-			//current = this;
-
-			//Build ();
 			Decorated = false;
-
-			/*			draw = new TCaliperGroup ();
-			draw.Show ();
-			Add (draw);*/
-
 			Events = EventMask.AllEventsMask;
-
 			setWindowShape ();
 		}
-		/*public TDrawGroup ()
-		{
-			Events = EventMask.AllEventsMask;
-		}*/
+
 		protected void OnDeleteEvent (object sender, DeleteEventArgs a)
 		{
 			Application.Quit ();
@@ -77,15 +64,16 @@ namespace gcaliper
 			//part2.rect.Y = 20;
 			part2.rect.X = 100;
 
-			generateImage ();
-			generateMask ();
+			//generateImage ();
+			//generateMask ();
 		}
 
-		double angle = 0.0174532925 * 22;
+		double angle = 0.0174532925 * 90;
 		public RECT unrotatedRect;
 		public RECT rotatedRect;
-		public POINT rotationCenter = new POINT (0, 0);
-		//public POINT rotatedCorner = new POINT (0, 0);
+		public POINT rotationCenter = new POINT (20, 65);
+		public POINT rotationCenterZero = new POINT (0, 0);
+
 		public void generateImage ()
 		{
 			unrotatedRect = parts.getRotationRect ();
@@ -105,7 +93,7 @@ namespace gcaliper
 							var r = part.rect;
 
 							using (var pat = new SurfacePattern (part.image)) {
-								pat.Matrix = new Matrix (){ X0 = -r.X, Y0 = 0 };
+								pat.Matrix = new Matrix (){ X0 = -r.X, Y0 = -r.Y };
 								//pat.Matrix = pat.Matrix;
 
 								cr.SetSource (pat);
@@ -117,7 +105,7 @@ namespace gcaliper
 					}
 
 					if (debug) {
-						cr.LineWidth = 2;
+						cr.LineWidth = 5;
 						cr.SetSourceRGBA (1, 0, 0, 1);
 						cr.Translate (debugPoint.X, debugPoint.Y);
 						cr.Arc (0, 0, 2, 0, Math.PI * 2);
@@ -128,9 +116,18 @@ namespace gcaliper
 
 				//surf.WriteToPng ("test.png");
 
-
 				//var angle = 0;
-				rotatedRect = funcs.rotateRect (unrotatedRect, rotationCenter, angle);
+				var oldRotatedRect = rotatedRect;
+				rotatedRect = funcs.rotateRect (unrotatedRect, rotationCenterZero, angle);
+
+				if (!(oldRotatedRect.Equals (rotatedRect))) {
+					int x, y;
+					GetPosition (out x, out y);
+					x -= (oldRotatedRect.X - rotatedRect.X);
+					y -= (oldRotatedRect.Y - rotatedRect.Y);
+					//x += 63;
+					Move (x, y);
+				}
 
 				//Rotate
 				var surf2 = new Cairo.ImageSurface (Format.ARGB32, rotatedRect.Width, rotatedRect.Height);
@@ -168,14 +165,6 @@ namespace gcaliper
 
 				//surf2.WriteToPng ("test2.png");
 
-				//Surface to pixbuf
-				/*
-			image = new Pixbuf (Colorspace.Rgb, true, 8, surf2.Width, surf2.Height);
-			for (var y = 0; y < surf2.Height; y++) {
-				for (var x = 0; x < surf2.Width; x++) {
-					image.setPixel (x, y, surf2.getPixelUInt (x, y));
-				}
-			}*/
 				image = surf2;
 			}
 		}
@@ -197,7 +186,7 @@ namespace gcaliper
 
 		private POINT rootMousePos;
 		private POINT mousePos;
-		private POINT startMousePos;
+		private POINT startRootMousePos;
 		private POINT startRectPos;
 		private POINT startWinPos;
 		private POINT mouseImagePos;
@@ -217,24 +206,29 @@ namespace gcaliper
 
 			mouseImagePos = AbsPosToUnrotatedPos (mousePos);
 
-			debugText = part2.rect.Contains (mouseImagePos).ToString ();
-			debugPoint = mouseImagePos;
-			invalidateImage ();
-
-
-			var relMousePos = new POINT (rootMousePos.X - startMousePos.X, rootMousePos.Y - startMousePos.Y);
-
-			if (resizing) {
-				part2.rect.X = (startRectPos.X + relMousePos.X);
-
-				angle = funcs.GetAngleOfLineBetweenTwoPoints (rotationCenter, relMousePos);
-
+			if (debug) {
+				debugText = part2.rect.Contains (mouseImagePos).ToString ();
+				debugPoint = mouseImagePos;
 				invalidateImage ();
 			}
 
+			var relMousePos = new POINT (rootMousePos.X - startRootMousePos.X, rootMousePos.Y - startRootMousePos.Y);
+
+			if (resizing) {
+				if (Math.Abs (relMousePos.X) > 10 || Math.Abs (relMousePos.Y) > 10) {
+					var deltaX = startRectPos.X + relMousePos.X;
+					var deltaY = startRectPos.Y + relMousePos.Y;
+					part2.rect.X = (int)Math.Round (Math.Sqrt (Math.Pow (deltaX, 2) + Math.Pow (deltaY, 2)));
+
+					angle = funcs.GetAngleOfLineBetweenTwoPoints (rotationCenterZero, relMousePos);
+
+					invalidateImage ();
+				}
+			}
+
 			if (moving) {
-				var x = (startWinPos.X + (rootMousePos.X - startMousePos.X));
-				var y = (startWinPos.Y + (rootMousePos.Y - startMousePos.Y));
+				var x = (startWinPos.X + (rootMousePos.X - startRootMousePos.X));
+				var y = (startWinPos.Y + (rootMousePos.Y - startRootMousePos.Y));
 				Move (x, y);
 			}
 
@@ -245,6 +239,7 @@ namespace gcaliper
 		{
 			if (needRedraw)
 				return;
+
 			needRedraw = true;
 			QueueDraw ();
 		}
@@ -259,13 +254,13 @@ namespace gcaliper
 				GetPosition (out x, out y);
 
 				startWinPos = new POINT (x, y);
-				startMousePos = new POINT ((int)evnt.XRoot, (int)evnt.YRoot);
+				startRootMousePos = new POINT ((int)evnt.XRoot, (int)evnt.YRoot);
 				startRectPos = part2.rect.Location;
 
 				if (part2.rect.Contains (mouseImagePos)) {
 					resizing = true;
 
-				} else if (part2.rect.Contains (mouseImagePos)) {
+				} else if (part1.rect.Contains (mouseImagePos)) {
 					moving = true;
 				}
 			}
