@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Gtk;
 using Gdk;
 using Cairo;
+using POINT = System.Drawing.Point;
+using RECT = System.Drawing.Rectangle;
 
 namespace gcaliper
 {
@@ -80,13 +82,15 @@ namespace gcaliper
 		}
 
 		double angle = 0.0174532925 * 22;
-		public System.Drawing.Rectangle rotationRect;
-
+		public RECT unrotatedRect;
+		public RECT rotatedRect;
+		public POINT rotationCenter = new POINT (0, 0);
+		//public POINT rotatedCorner = new POINT (0, 0);
 		public void generateImage ()
 		{
-			rotationRect = parts.getRotationRect ();
+			unrotatedRect = parts.getRotationRect ();
 
-			using (var surf = new Cairo.ImageSurface (Format.ARGB32, rotationRect.Width, rotationRect.Height)) {
+			using (var surf = new Cairo.ImageSurface (Format.ARGB32, unrotatedRect.Width, unrotatedRect.Height)) {
 				using (var cr = new Context (surf)) {
 
 					//Clear
@@ -111,25 +115,33 @@ namespace gcaliper
 							}
 						}
 					}
+
+					if (debug) {
+						cr.LineWidth = 2;
+						cr.SetSourceRGBA (1, 0, 0, 1);
+						cr.Translate (debugPoint.X, debugPoint.Y);
+						cr.Arc (0, 0, 2, 0, Math.PI * 2);
+						cr.StrokePreserve ();
+					}
+
 				}
 
 				//surf.WriteToPng ("test.png");
 
 
-				var center = new System.Drawing.Point (0, 0);
 				//var angle = 0;
-				var rr = funcs.rotateRect (rotationRect, center, angle);
+				rotatedRect = funcs.rotateRect (unrotatedRect, rotationCenter, angle);
 
 				//Rotate
-				var surf2 = new Cairo.ImageSurface (Format.ARGB32, rr.Width, rr.Height);
+				var surf2 = new Cairo.ImageSurface (Format.ARGB32, rotatedRect.Width, rotatedRect.Height);
 				using (var cr = new Context (surf2)) {
 					cr.Operator = Operator.Clear;
 					cr.Paint ();
 					cr.Operator = Operator.Over;
 
-					cr.Translate (-rr.X, -rr.Y);
+					cr.Translate (-rotatedRect.X, -rotatedRect.Y);
 					cr.Rotate (angle);
-					//var pp = funcs.rotatePoint (rotationRect.Location, new System.Drawing.Point (0, 0), angle);
+					//var pp = funcs.rotatePoint (rotationRect.Location, new POINT (0, 0), angle);
 					using (var pat2 = new SurfacePattern (surf)) {
 						//pat2.Matrix = new Matrix (){ X0 =  -rr.X, Y0 = -rr.Y };
 
@@ -137,6 +149,21 @@ namespace gcaliper
 						//cr.Translate (100, 100);
 						cr.Paint ();
 					}
+
+					//Debug
+					if (true) {
+						cr.Matrix = new Matrix ();
+						if (debugText != null) {
+							//cr.Operator=Operator.Source;
+							cr.SetSourceRGBA (0, 1, 0, 1);
+							cr.SelectFontFace ("Arial", FontSlant.Normal, FontWeight.Normal);
+							cr.SetFontSize (20);
+							cr.MoveTo (20, 20);
+							cr.ShowText (debugText);
+							cr.Fill ();
+						}
+					}
+
 				}
 
 				//surf2.WriteToPng ("test2.png");
@@ -153,56 +180,92 @@ namespace gcaliper
 			}
 		}
 
-		private System.Drawing.Point mousePos;
-		private System.Drawing.Point startMousePos;
-		private System.Drawing.Point startRectPos;
-		private System.Drawing.Point startWinPos;
+		public bool debug = true;
+		private string _debugText;
 
+		public string debugText {
+			get {
+				return _debugText;
+
+			}set { 
+				if (value == _debugText)
+					return;
+				_debugText = value;
+				invalidateImage ();
+			}
+		}
+
+		private POINT rootMousePos;
+		private POINT mousePos;
+		private POINT startMousePos;
+		private POINT startRectPos;
+		private POINT startWinPos;
+		private POINT mouseImagePos;
 		private bool resizing = false;
 		private bool moving = false;
+		private POINT debugPoint = new POINT (10, 10);
+
+		private POINT AbsPosToUnrotatedPos (POINT pos)
+		{
+			return funcs.rotatePoint (new POINT (mousePos.X + rotatedRect.X, mousePos.Y + rotatedRect.Y), new POINT (0, 0), -angle);
+		}
 
 		protected override bool OnMotionNotifyEvent (EventMotion evnt)
 		{
-			mousePos = new System.Drawing.Point ((int)evnt.XRoot, (int)evnt.YRoot);
+			rootMousePos = new POINT ((int)evnt.XRoot, (int)evnt.YRoot);
+			mousePos = new POINT ((int)evnt.X, (int)evnt.Y);
 
-			var relMousePos = new System.Drawing.Point (mousePos.X - startMousePos.X, mousePos.Y - startMousePos.Y);
+			mouseImagePos = AbsPosToUnrotatedPos (mousePos);
+
+			debugText = part2.rect.Contains (mouseImagePos).ToString ();
+			debugPoint = mouseImagePos;
+			invalidateImage ();
+
+
+			var relMousePos = new POINT (rootMousePos.X - startMousePos.X, rootMousePos.Y - startMousePos.Y);
 
 			if (resizing) {
 				part2.rect.X = (startRectPos.X + relMousePos.X);
 
-				var rotatedCenter = new System.Drawing.PointF (0, 0); //TODO
+				angle = funcs.GetAngleOfLineBetweenTwoPoints (rotationCenter, relMousePos);
 
-
-				//angle = funcs.GetAngleOfLineBetweenTwoPoints (rotatedCenter, relMousePos);
-
-				needRedraw = true;
-				QueueDraw ();
+				invalidateImage ();
 			}
 
 			if (moving) {
-				var x = (startWinPos.X + (mousePos.X - startMousePos.X));
-				var y = (startWinPos.Y + (mousePos.Y - startMousePos.Y));
+				var x = (startWinPos.X + (rootMousePos.X - startMousePos.X));
+				var y = (startWinPos.Y + (rootMousePos.Y - startMousePos.Y));
 				Move (x, y);
 			}
 
 			return base.OnMotionNotifyEvent (evnt);
 		}
 
+		public void invalidateImage ()
+		{
+			if (needRedraw)
+				return;
+			needRedraw = true;
+			QueueDraw ();
+		}
+
 		protected override bool OnButtonPressEvent (EventButton evnt)
 		{
+			mousePos = new POINT ((int)evnt.X, (int)evnt.Y);
+			mouseImagePos = AbsPosToUnrotatedPos (mousePos);
 			if (evnt.Button == 1) {
 				int x;
 				int y;
 				GetPosition (out x, out y);
 
-				startWinPos = new System.Drawing.Point (x, y);
-				startMousePos = new System.Drawing.Point ((int)evnt.XRoot, (int)evnt.YRoot);
+				startWinPos = new POINT (x, y);
+				startMousePos = new POINT ((int)evnt.XRoot, (int)evnt.YRoot);
 				startRectPos = part2.rect.Location;
 
-				if (part2.rect.Contains ((int)evnt.X, (int)evnt.Y)) {
+				if (part2.rect.Contains (mouseImagePos)) {
 					resizing = true;
 
-				} else if (part1.rect.Contains ((int)evnt.X, (int)evnt.Y)) {
+				} else if (part2.rect.Contains (mouseImagePos)) {
 					moving = true;
 				}
 			}
@@ -244,22 +307,6 @@ namespace gcaliper
 					this.bgPixMap.Dispose ();
 				this.bgPixMap = pixmap;
 				setWindowShape ();
-
-				//GdkWindow.DrawPixbuf (null, image, 0, 0, 0, 0, -1, -1, RgbDither.Normal, 0, 0);
-
-				//s.SetBaseGC(StateType.Normal, 
-				/*
-				var cr = CairoHelper.Create (GdkWindow);
-
-				cr.Rotate (Math.PI / 4);
-
-				cr.SetSourceRGB (0, 0, 0);
-				cr.Operator = Operator.Source;
-				cr.SelectFontFace ("Arial", FontSlant.Normal, FontWeight.Normal);
-				cr.SetFontSize(20);
-				cr.MoveTo (20, 20);
-				cr.ShowText ("text " + pos.ToString ());
-				*/
 
 			} catch (Exception ex) {
 				new MessageDialog (null, DialogFlags.Modal, MessageType.Error, ButtonsType.Ok, ex.ToString ());
