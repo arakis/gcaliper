@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Gtk;
 using Gdk;
 using Cairo;
+
 using POINT = System.Drawing.Point;
 using RECT = System.Drawing.Rectangle;
 
@@ -68,10 +69,12 @@ namespace gcaliper
 			//generateMask ();
 		}
 
-		double angle = 0.0174532925 * 90;
+		double angle = 0.0174532925 * 22;
 		public RECT unrotatedRect;
 		public RECT rotatedRect;
-		public POINT rotationCenter = new POINT (20, 65);
+		//public POINT rotationCenter = new POINT (20, 65);
+		public POINT rotationCenterRoot = new POINT (1920+1920/2, 1200/2);
+		public POINT rotationCenterImage = new POINT (20,65);
 		public POINT rotationCenterZero = new POINT (0, 0);
 
 		public void generateImage ()
@@ -120,14 +123,14 @@ namespace gcaliper
 				var oldRotatedRect = rotatedRect;
 				rotatedRect = funcs.rotateRect (unrotatedRect, rotationCenterZero, angle);
 
-				if (!(oldRotatedRect.Equals (rotatedRect))) {
+				/*				if (!(oldRotatedRect.Equals (rotatedRect))) {
 					int x, y;
 					GetPosition (out x, out y);
 					x -= (oldRotatedRect.X - rotatedRect.X);
 					y -= (oldRotatedRect.Y - rotatedRect.Y);
 					//x += 63;
 					Move (x, y);
-				}
+				}*/
 
 				//Rotate
 				var surf2 = new Cairo.ImageSurface (Format.ARGB32, rotatedRect.Width, rotatedRect.Height);
@@ -165,11 +168,13 @@ namespace gcaliper
 
 				//surf2.WriteToPng ("test2.png");
 
+				if (image != null)
+					image.Dispose ();
 				image = surf2;
 			}
 		}
 
-		public bool debug = true;
+		public bool debug = false;
 		private string _debugText;
 
 		public string debugText {
@@ -216,11 +221,11 @@ namespace gcaliper
 
 			if (resizing) {
 				if (Math.Abs (relMousePos.X) > 10 || Math.Abs (relMousePos.Y) > 10) {
-					var deltaX = startRectPos.X + relMousePos.X;
-					var deltaY = startRectPos.Y + relMousePos.Y;
-					part2.rect.X = (int)Math.Round (Math.Sqrt (Math.Pow (deltaX, 2) + Math.Pow (deltaY, 2)));
+					//var deltaX = startRectPos.X + relMousePos.X;
+					//var deltaY = startRectPos.Y + relMousePos.Y;
+					part2.rect.X = (int)Math.Round (Math.Abs(Math.Sqrt (Math.Pow (rootMousePos.X-rotationCenterRoot.X, 2) + Math.Pow (rootMousePos.Y-rotationCenterRoot.Y, 2))));
 
-					angle = funcs.GetAngleOfLineBetweenTwoPoints (rotationCenterZero, relMousePos);
+					angle = funcs.GetAngleOfLineBetweenTwoPoints (rotationCenterRoot, rootMousePos);
 
 					invalidateImage ();
 				}
@@ -279,6 +284,20 @@ namespace gcaliper
 
 		private Pixmap bgPixMap;
 
+		public void updatePosition(){
+			var p = rotationCenterRoot;
+
+			var r = funcs.rotatePoint (rotationCenterImage, rotationCenterZero, angle);
+
+			p.X -= r.X;
+			p.Y -= r.Y;
+
+			p.X += rotatedRect.X;
+			p.Y += rotatedRect.Y;
+
+			Move (p.X, p.Y);
+		}
+
 		public void redraw ()
 		{
 			needRedraw = false;
@@ -303,6 +322,7 @@ namespace gcaliper
 				this.bgPixMap = pixmap;
 				setWindowShape ();
 
+				updatePosition();
 			} catch (Exception ex) {
 				new MessageDialog (null, DialogFlags.Modal, MessageType.Error, ButtonsType.Ok, ex.ToString ());
 			}
