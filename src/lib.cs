@@ -234,6 +234,7 @@ namespace gcaliper
 	{
 		public ImageSurface image;
 		public bool rotate;
+		//public bool drawNonrotated=false;
 		//public PointD rotationCenter;
 		//public double rotationAngle;
 		public System.Drawing.Rectangle rect;
@@ -263,6 +264,17 @@ namespace gcaliper
 		{
 			rotate = true;
 		}
+	}
+
+	public class TCaliperPart3 : TImagePart
+	{
+
+		public TCaliperPart3 () : base ("../../template/caliper/3.png")
+		{
+			rotate = false;
+			//drawNonrotated = true;
+		}
+
 	}
 }
 

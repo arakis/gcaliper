@@ -55,11 +55,13 @@ namespace gcaliper
 	{
 		public TCaliperPart1 part1;
 		public TCaliperPart2 part2;
+		public TCaliperPart3 part3;
 
 		public TCaliperGroup ()
 		{
 			parts.Add (part1 = new TCaliperPart1 ());
 			parts.Add (part2 = new TCaliperPart2 ());
+			parts.Add (part3 = new TCaliperPart3 ());
 
 			//part2.rect.Y = 20;
 			part2.rect.X = 100;
@@ -72,8 +74,7 @@ namespace gcaliper
 		public RECT unrotatedRect;
 		public RECT rotatedRect;
 		//public POINT rotationCenter = new POINT (20, 65);
-		public POINT rotationCenterRoot = new POINT ();
-//new POINT (1920 + 1920 / 2, 1200 / 2);
+		public POINT rotationCenterRoot = new POINT (1920 + 1920 / 2, 1200 / 2);
 		public POINT rotationCenterImage = new POINT (20, 65);
 		public POINT rotationCenterZero = new POINT (0, 0);
 
@@ -134,15 +135,6 @@ namespace gcaliper
 				var oldRotatedRect = rotatedRect;
 				rotatedRect = funcs.rotateRect (unrotatedRect, rotationCenterZero, angle);
 
-				/*				if (!(oldRotatedRect.Equals (rotatedRect))) {
-					int x, y;
-					GetPosition (out x, out y);
-					x -= (oldRotatedRect.X - rotatedRect.X);
-					y -= (oldRotatedRect.Y - rotatedRect.Y);
-					//x += 63;
-					Move (x, y);
-				}*/
-
 				//Rotate
 				var surf2 = new Cairo.ImageSurface (Format.ARGB32, rotatedRect.Width, rotatedRect.Height);
 				using (var cr = new Context (surf2)) {
@@ -175,6 +167,51 @@ namespace gcaliper
 						}
 					}
 
+					foreach (var part in parts) {
+						if (!part.rotate) {
+							cr.Matrix = new Matrix ();
+
+							var c = new POINT (part2.rect.Location.X+45, part2.rect.Location.Y+68);
+
+							part.rect.X = c.X;
+							part.rect.Y = c.Y;
+
+							var p = ImagePosToRotatedPos (part.rect.Location);
+
+							p.X -= part.rect.Width/2;
+							p.Y -= part.rect.Height/2;
+
+							//Draw image
+
+							using (var pat = new SurfacePattern (part.image)) {
+								pat.Matrix = new Matrix (){ X0 = -p.X, Y0 = -p.Y };
+								//pat.Matrix = pat.Matrix;
+
+								cr.SetSource (pat);
+								cr.Rectangle (new Cairo.Rectangle (p.X, p.Y, part.rect.Width, part.rect.Height));
+								cr.Fill ();
+
+								cr.SetSourceRGBA (0, 1, 0, 1);
+								cr.SelectFontFace ("Arial", FontSlant.Normal, FontWeight.Normal);
+								cr.SetFontSize (10);
+								cr.MoveTo (p.X+10, p.Y+25);
+								cr.ShowText (part2.rect.Location.X.ToString());
+								cr.Fill ();
+							}
+						}
+					}
+/*
+					cr.Matrix = new Matrix ();
+					var pos = ImagePosToRotatedPos (part2.rect.Location);
+					//cr.Translate (pos.X, pos.Y);
+
+					cr.SetSourceRGBA (0, 1, 0, 1);
+					cr.SelectFontFace ("Arial", FontSlant.Normal, FontWeight.Normal);
+					cr.SetFontSize (10);
+					cr.MoveTo (pos.X, pos.Y);
+					cr.ShowText ("aaaa");
+					cr.Fill ();
+*/
 				}
 
 				//surf2.WriteToPng ("test2.png");
@@ -313,6 +350,7 @@ namespace gcaliper
 
 		public void updateRotationCenter ()
 		{
+			return;
 			int x, y;
 			GetPosition (out x, out y);
 
@@ -326,6 +364,20 @@ namespace gcaliper
 			p.Y += r.Y;
 
 			rotationCenterRoot = p;
+		}
+
+		public POINT ImagePosToRotatedPos(POINT imgPos)
+		{
+			var p = new POINT (0, 0);
+			var r = funcs.rotatePoint (imgPos, rotationCenterZero, angle);
+
+			p.X -= rotatedRect.X;
+			p.Y -= rotatedRect.Y;
+
+			p.X += r.X;
+			p.Y += r.Y;
+
+			return p;
 		}
 
 		public bool positioned = false;
