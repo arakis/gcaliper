@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Gtk;
 using Gdk;
 using Cairo;
-
 using POINT = System.Drawing.Point;
 using RECT = System.Drawing.Rectangle;
 
@@ -69,13 +68,25 @@ namespace gcaliper
 			//generateMask ();
 		}
 
-		double angle = 0.0174532925 * 22;
+		double angle = 0.0174532925 * 0;
 		public RECT unrotatedRect;
 		public RECT rotatedRect;
 		//public POINT rotationCenter = new POINT (20, 65);
-		public POINT rotationCenterRoot = new POINT (1920+1920/2, 1200/2);
-		public POINT rotationCenterImage = new POINT (20,65);
+		public POINT rotationCenterRoot = new POINT ();
+//new POINT (1920 + 1920 / 2, 1200 / 2);
+		public POINT rotationCenterImage = new POINT (20, 65);
 		public POINT rotationCenterZero = new POINT (0, 0);
+
+		protected override bool OnConfigureEvent (EventConfigure evnt)
+		{
+			updateRotationCenter ();
+			if (!positioned) {
+				needRedraw = false;
+				positioned = true;
+				invalidateImage ();
+			}
+			return base.OnConfigureEvent (evnt);
+		}
 
 		public void generateImage ()
 		{
@@ -223,7 +234,7 @@ namespace gcaliper
 				if (Math.Abs (relMousePos.X) > 10 || Math.Abs (relMousePos.Y) > 10) {
 					//var deltaX = startRectPos.X + relMousePos.X;
 					//var deltaY = startRectPos.Y + relMousePos.Y;
-					part2.rect.X = (int)Math.Round (Math.Abs(Math.Sqrt (Math.Pow (rootMousePos.X-rotationCenterRoot.X, 2) + Math.Pow (rootMousePos.Y-rotationCenterRoot.Y, 2))));
+					part2.rect.X = (int)Math.Round (Math.Abs (Math.Sqrt (Math.Pow (rootMousePos.X - rotationCenterRoot.X, 2) + Math.Pow (rootMousePos.Y - rotationCenterRoot.Y, 2))));
 
 					angle = funcs.GetAngleOfLineBetweenTwoPoints (rotationCenterRoot, rootMousePos);
 
@@ -235,6 +246,7 @@ namespace gcaliper
 				var x = (startWinPos.X + (rootMousePos.X - startRootMousePos.X));
 				var y = (startWinPos.Y + (rootMousePos.Y - startRootMousePos.Y));
 				Move (x, y);
+				updateRotationCenter ();
 			}
 
 			return base.OnMotionNotifyEvent (evnt);
@@ -284,7 +296,8 @@ namespace gcaliper
 
 		private Pixmap bgPixMap;
 
-		public void updatePosition(){
+		public void updatePosition ()
+		{
 			var p = rotationCenterRoot;
 
 			var r = funcs.rotatePoint (rotationCenterImage, rotationCenterZero, angle);
@@ -298,8 +311,29 @@ namespace gcaliper
 			Move (p.X, p.Y);
 		}
 
+		public void updateRotationCenter ()
+		{
+			int x, y;
+			GetPosition (out x, out y);
+
+			var p = new POINT (x, y);
+			var r = funcs.rotatePoint (rotationCenterImage, rotationCenterZero, angle);
+
+			p.X -= rotatedRect.X;
+			p.Y -= rotatedRect.Y;
+
+			p.X += r.X;
+			p.Y += r.Y;
+
+			rotationCenterRoot = p;
+		}
+
+		public bool positioned = false;
+
 		public void redraw ()
 		{
+			if (!positioned)
+				return;
 			needRedraw = false;
 			try {
 
@@ -322,7 +356,7 @@ namespace gcaliper
 				this.bgPixMap = pixmap;
 				setWindowShape ();
 
-				updatePosition();
+				updatePosition ();
 			} catch (Exception ex) {
 				new MessageDialog (null, DialogFlags.Modal, MessageType.Error, ButtonsType.Ok, ex.ToString ());
 			}
@@ -335,6 +369,7 @@ namespace gcaliper
 		{
 			if (needRedraw)
 				redraw ();
+
 			return base.OnExposeEvent (evnt);
 		}
 	}
