@@ -69,13 +69,15 @@ namespace gcaliper
 			//generateImage ();
 			//generateMask ();
 		}
-
+		// *** configuration ***
+		public POINT rotationCenterImage = new POINT (20, 65);
+		public POINT displayCenterOffset = new POINT (45, 68);
+		public int minX=15;
+		// ***
 		double angle = 0.0174532925 * 0;
 		public RECT unrotatedRect;
 		public RECT rotatedRect;
-		//public POINT rotationCenter = new POINT (20, 65);
 		public POINT rotationCenterRoot = new POINT (1920 + 1920 / 2, 1200 / 2);
-		public POINT rotationCenterImage = new POINT (20, 65);
 		public POINT rotationCenterZero = new POINT (0, 0);
 
 		protected override bool OnConfigureEvent (EventConfigure evnt)
@@ -171,15 +173,15 @@ namespace gcaliper
 						if (!part.rotate) {
 							cr.Matrix = new Matrix ();
 
-							var c = new POINT (part2.rect.Location.X+45, part2.rect.Location.Y+68);
+							var c = new POINT (part2.rect.Location.X + displayCenterOffset.X, part2.rect.Location.Y + displayCenterOffset.Y);
 
 							part.rect.X = c.X;
 							part.rect.Y = c.Y;
 
 							var p = ImagePosToRotatedPos (part.rect.Location);
 
-							p.X -= part.rect.Width/2;
-							p.Y -= part.rect.Height/2;
+							p.X -= part.rect.Width / 2;
+							p.Y -= part.rect.Height / 2;
 
 							//Draw image
 
@@ -194,8 +196,8 @@ namespace gcaliper
 								cr.SetSourceRGBA (0, 1, 0, 1);
 								cr.SelectFontFace ("Arial", FontSlant.Normal, FontWeight.Normal);
 								cr.SetFontSize (10);
-								cr.MoveTo (p.X+10, p.Y+25);
-								cr.ShowText (part2.rect.Location.X.ToString());
+								cr.MoveTo (p.X + 10, p.Y + 25);
+								cr.ShowText (distance.ToString ());
 								cr.Fill ();
 							}
 						}
@@ -222,6 +224,15 @@ namespace gcaliper
 			}
 		}
 
+		public int distance {
+			get{
+				return part2.rect.X - minX;
+			 }
+			set{
+				part2.rect.X =value+ minX;
+			 }
+		}
+
 		public bool debug = false;
 		private string _debugText;
 
@@ -246,10 +257,17 @@ namespace gcaliper
 		private bool resizing = false;
 		private bool moving = false;
 		private POINT debugPoint = new POINT (10, 10);
+		private double moveMouseAngleOffset;
+		private int moveMouseXOffset;
 
 		private POINT AbsPosToUnrotatedPos (POINT pos)
 		{
 			return funcs.rotatePoint (new POINT (mousePos.X + rotatedRect.X, mousePos.Y + rotatedRect.Y), new POINT (0, 0), -angle);
+		}
+
+		public int getDistanceToRotationCenter (POINT rootPos)
+		{
+			return (int)Math.Round (Math.Abs (Math.Sqrt (Math.Pow (rootPos.X - rotationCenterRoot.X, 2) + Math.Pow (rootPos.Y - rotationCenterRoot.Y, 2))));
 		}
 
 		protected override bool OnMotionNotifyEvent (EventMotion evnt)
@@ -269,11 +287,13 @@ namespace gcaliper
 
 			if (resizing) {
 				if (Math.Abs (relMousePos.X) > 10 || Math.Abs (relMousePos.Y) > 10) {
-					//var deltaX = startRectPos.X + relMousePos.X;
-					//var deltaY = startRectPos.Y + relMousePos.Y;
-					part2.rect.X = (int)Math.Round (Math.Abs (Math.Sqrt (Math.Pow (rootMousePos.X - rotationCenterRoot.X, 2) + Math.Pow (rootMousePos.Y - rotationCenterRoot.Y, 2))));
+
+					part2.rect.X = getDistanceToRotationCenter (rootMousePos);
+					part2.rect.X -= moveMouseXOffset;
+					part2.rect.X = Math.Max (part2.rect.X, minX);
 
 					angle = funcs.GetAngleOfLineBetweenTwoPoints (rotationCenterRoot, rootMousePos);
+					angle -= moveMouseAngleOffset;
 
 					invalidateImage ();
 				}
@@ -314,6 +334,9 @@ namespace gcaliper
 				if (part2.rect.Contains (mouseImagePos)) {
 					resizing = true;
 
+					moveMouseXOffset = getDistanceToRotationCenter (startRootMousePos) - part2.rect.X;
+					moveMouseAngleOffset = funcs.GetAngleOfLineBetweenTwoPoints (rotationCenterRoot, startRootMousePos) - angle;
+
 				} else if (part1.rect.Contains (mouseImagePos)) {
 					moving = true;
 				}
@@ -350,7 +373,7 @@ namespace gcaliper
 
 		public void updateRotationCenter ()
 		{
-			return;
+			//return;
 			int x, y;
 			GetPosition (out x, out y);
 
@@ -366,7 +389,7 @@ namespace gcaliper
 			rotationCenterRoot = p;
 		}
 
-		public POINT ImagePosToRotatedPos(POINT imgPos)
+		public POINT ImagePosToRotatedPos (POINT imgPos)
 		{
 			var p = new POINT (0, 0);
 			var r = funcs.rotatePoint (imgPos, rotationCenterZero, angle);
@@ -386,6 +409,7 @@ namespace gcaliper
 		{
 			if (!positioned)
 				return;
+
 			needRedraw = false;
 			try {
 
