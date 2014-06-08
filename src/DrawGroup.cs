@@ -73,8 +73,11 @@ namespace gcaliper
 		public POINT rotationCenterImage = new POINT (20, 65);
 		public POINT displayCenterOffset = new POINT (45, 68);
 		public int minX=15;
+		public int minDistanceForRotation = 50;
+		public double snapAngle = 0.5;
 		// ***
 		double angle = 0.0174532925 * 0;
+		double tmpAngle = 0;
 		public RECT unrotatedRect;
 		public RECT rotatedRect;
 		public POINT rotationCenterRoot = new POINT (1920 + 1920 / 2, 1200 / 2);
@@ -197,7 +200,7 @@ namespace gcaliper
 								cr.SelectFontFace ("Arial", FontSlant.Normal, FontWeight.Normal);
 								cr.SetFontSize (10);
 								cr.MoveTo (p.X + 10, p.Y + 25);
-								cr.ShowText (distance.ToString ());
+								cr.ShowText (distance.ToString ()+" "+Math.Round(angle,1).ToString());
 								cr.Fill ();
 							}
 						}
@@ -292,8 +295,19 @@ namespace gcaliper
 					part2.rect.X -= moveMouseXOffset;
 					part2.rect.X = Math.Max (part2.rect.X, minX);
 
-					angle = funcs.GetAngleOfLineBetweenTwoPoints (rotationCenterRoot, rootMousePos);
-					angle -= moveMouseAngleOffset;
+					if (distance > minDistanceForRotation) {
+						tmpAngle = funcs.GetAngleOfLineBetweenTwoPoints (rotationCenterRoot, rootMousePos);
+						tmpAngle -= moveMouseAngleOffset;
+
+						var angleMarkers = new double[]{ 0, Math.PI / 2, Math.PI, -Math.PI, -(Math.PI / 2) };
+
+						for (var i = 0; i < angleMarkers.Length; i++) {
+							var a = angleMarkers [i];
+							if (tmpAngle < a + snapAngle && tmpAngle > a - snapAngle) {
+								angle = a;
+							}
+						}
+					}
 
 					invalidateImage ();
 				}

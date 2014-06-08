@@ -3,8 +3,8 @@
   <MonoDevelop.Ide.Workbench ActiveDocument="src/DrawGroup.cs">
     <Files>
       <File FileName="src/Program.cs" Line="1" Column="1" />
-      <File FileName="src/DrawGroup.cs" Line="274" Column="6" />
-      <File FileName="src/lib.cs" Line="9" Column="19" />
+      <File FileName="src/lib.cs" Line="1" Column="1" />
+      <File FileName="src/DrawGroup.cs" Line="290" Column="6" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
