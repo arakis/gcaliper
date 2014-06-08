@@ -265,6 +265,21 @@ namespace gcaliper
 		//public double rotationAngle;
 		public System.Drawing.Rectangle rect;
 		//public System.Drawing.Rectangle rotatedRect;
+
+		public virtual void draw(Context cr){
+			var r = rect;
+			using (var pat = new SurfacePattern (image)) {
+				pat.Matrix = new Matrix (){ X0 = -r.X, Y0 = -r.Y };
+				pat.Extend = Extend.Repeat;
+				//pat.Matrix = pat.Matrix;
+
+				cr.SetSource (pat);
+				cr.Rectangle (new Cairo.Rectangle (r.X, r.Y, r.Width, r.Height));
+				cr.Fill ();
+
+			}
+		}
+
 	}
 
 	public class TImagePart : TPart
@@ -325,6 +340,17 @@ namespace gcaliper
 			//drawNonrotated = true;
 		}
 	}
+
+	public class TCaliperPart4 : TImagePart
+	{
+		public TCaliperPart4 () : base ("../../template/caliper/4.png")
+		{
+			rotate = true;
+			//drawNonrotated = true;
+		}
+
+	}
+
 }
 
 

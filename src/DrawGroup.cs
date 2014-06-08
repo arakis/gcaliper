@@ -78,17 +78,21 @@ namespace gcaliper
 		public TCaliperPart1 part1;
 		public TCaliperPart2 part2;
 		public TCaliperPart3 part3;
+		public TCaliperPart4 part4;
 
 		public TCaliperGroup ()
 		{
 			parts.Add (part1 = new TCaliperPart1 ());
 			parts.Add (part2 = new TCaliperPart2 ());
 			parts.Add (part3 = new TCaliperPart3 ());
+			parts.Add (part4 = new TCaliperPart4 ());
 
 			//part2.rect.Y = 20;
-			part2.rect.X = 100;
+			distance = 100;
+			part4.rect.X = 52;
+			part4.rect.Y = 47;
 
-			setContrastColor( contrastColor);
+			setContrastColor (contrastColor);
 
 			var color1 = new MenuItem ("Color");
 			menu.Insert (color1, 0);
@@ -99,14 +103,13 @@ namespace gcaliper
 						chooser.Style = originalStyle;
 
 						if (chooser.Run () == (int)ResponseType.Ok) {
-							setContrastColor( new TColor (chooser.ColorSelection.CurrentColor));
+							setContrastColor (new TColor (chooser.ColorSelection.CurrentColor));
 						}
 						chooser.Hide ();
 					}
 				}
 			};
 		}
-
 		// *** configuration ***
 		public POINT rotationCenterImage = new POINT (20, 65);
 		public POINT displayCenterOffset = new POINT (45, 68);
@@ -116,14 +119,14 @@ namespace gcaliper
 		private TColor contrastColor = new TColor (150, 0, 0);
 		double angle = 0.0174532925 * 0;
 		// ***
-
 		double tmpAngle = 0;
 		public RECT unrotatedRect;
 		public RECT rotatedRect;
 		public POINT rotationCenterRoot = new POINT (1920 + 1920 / 2, 1200 / 2);
 		public POINT rotationCenterZero = new POINT (0, 0);
 
-		public void setContrastColor(TColor color){
+		public void setContrastColor (TColor color)
+		{
 			contrastColor = color;
 			foreach (var part in parts) {
 				part.applyContrast (color);
@@ -158,17 +161,7 @@ namespace gcaliper
 						if (part.rotate) {
 							//Draw image
 
-							var r = part.rect;
-
-							using (var pat = new SurfacePattern (part.image)) {
-								pat.Matrix = new Matrix (){ X0 = -r.X, Y0 = -r.Y };
-								//pat.Matrix = pat.Matrix;
-
-								cr.SetSource (pat);
-								cr.Rectangle (new Cairo.Rectangle (r.X, r.Y, r.Width, r.Height));
-								cr.Fill ();
-
-							}
+							part.draw (cr);
 						}
 					}
 
@@ -281,6 +274,7 @@ namespace gcaliper
 			}
 			set {
 				part2.rect.X = value + minX;
+				updatePart4 ();
 			}
 		}
 
@@ -324,7 +318,7 @@ namespace gcaliper
 			int x, y;
 			GetPosition (out x, out y);
 
-			var p=AbsPosToUnrotatedPos (new POINT (rootPos.X-x, rootPos.Y-y));
+			var p = AbsPosToUnrotatedPos (new POINT (rootPos.X - x, rootPos.Y - y));
 			return p.X - rotationCenterImage.X;
 		}
 
@@ -349,6 +343,7 @@ namespace gcaliper
 					part2.rect.X = getDistanceToRotationCenter (rootMousePos);
 					part2.rect.X -= moveMouseXOffset;
 					part2.rect.X = Math.Max (part2.rect.X, minX);
+					updatePart4 ();
 
 					if (distance > minDistanceForRotation) {
 						tmpAngle = funcs.GetAngleOfLineBetweenTwoPoints (rotationCenterRoot, rootMousePos);
@@ -376,6 +371,10 @@ namespace gcaliper
 			}
 
 			return base.OnMotionNotifyEvent (evnt);
+		}
+
+		private void updatePart4(){
+			part4.rect.Width = distance;
 		}
 
 		protected override bool OnButtonPressEvent (EventButton evnt)
