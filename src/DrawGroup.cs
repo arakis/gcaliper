@@ -14,7 +14,7 @@ namespace gcaliper
 		public ImageSurface image;
 		public TPartList parts = new TPartList ();
 		protected Menu menu;
-		private Style originalStyle;
+		protected Style originalStyle;
 		protected bool needRedraw = true;
 
 		public TDrawGroup () : base (Gtk.WindowType.Toplevel)
@@ -25,30 +25,10 @@ namespace gcaliper
 
 			menu = new Menu ();
 			var quitItem = new MenuItem ("Quit");
-			menu.Add(quitItem);
+			menu.Add (quitItem);
 			quitItem.ButtonReleaseEvent += (o, e) => {
-				if(e.Event.Button==1)
-					Application.Quit();
-			};
-
-			var color1 = new MenuItem ("Color");
-			menu.Add(color1);
-			color1.ButtonReleaseEvent += (o, e) => {
-				if(e.Event.Button==1)
-				{
-					using(var chooser=new ColorSelectionDialog("change color")){
-						//chooser.TransientFor=this;
-						chooser.Style=originalStyle;
-
-						if(chooser.Run()==(int)ResponseType.Ok){
-							foreach(var part in parts){
-								part.applyContrast(new TColor(chooser.ColorSelection.CurrentColor));
-							}
-							invalidateImage();
-						}
-						chooser.Hide();
-					}
-				}
+				if (e.Event.Button == 1)
+					Application.Quit ();
 			};
 
 			setWindowShape ();
@@ -108,22 +88,48 @@ namespace gcaliper
 			//part2.rect.Y = 20;
 			part2.rect.X = 100;
 
-			//generateImage ();
-			//generateMask ();
+			setContrastColor( contrastColor);
+
+			var color1 = new MenuItem ("Color");
+			menu.Insert (color1, 0);
+			color1.ButtonReleaseEvent += (o, e) => {
+				if (e.Event.Button == 1) {
+					using (var chooser = new ColorSelectionDialog ("change color")) {
+						//chooser.TransientFor=this;
+						chooser.Style = originalStyle;
+
+						if (chooser.Run () == (int)ResponseType.Ok) {
+							setContrastColor( new TColor (chooser.ColorSelection.CurrentColor));
+						}
+						chooser.Hide ();
+					}
+				}
+			};
 		}
+
 		// *** configuration ***
 		public POINT rotationCenterImage = new POINT (20, 65);
 		public POINT displayCenterOffset = new POINT (45, 68);
-		public int minX=15;
+		public int minX = 15;
 		public int minDistanceForRotation = 50;
 		public double snapAngle = 0.5;
-		// ***
+		private TColor contrastColor = new TColor (150, 0, 0);
 		double angle = 0.0174532925 * 0;
+		// ***
+
 		double tmpAngle = 0;
 		public RECT unrotatedRect;
 		public RECT rotatedRect;
 		public POINT rotationCenterRoot = new POINT (1920 + 1920 / 2, 1200 / 2);
 		public POINT rotationCenterZero = new POINT (0, 0);
+
+		public void setContrastColor(TColor color){
+			contrastColor = color;
+			foreach (var part in parts) {
+				part.applyContrast (color);
+			}
+			invalidateImage ();
+		}
 
 		protected override bool OnConfigureEvent (EventConfigure evnt)
 		{
@@ -242,7 +248,7 @@ namespace gcaliper
 								cr.SelectFontFace ("Arial", FontSlant.Normal, FontWeight.Normal);
 								cr.SetFontSize (10);
 								cr.MoveTo (p.X + 10, p.Y + 25);
-								cr.ShowText (distance.ToString ()+" "+Math.Round(angle,1).ToString());
+								cr.ShowText (distance.ToString () + " " + Math.Round (angle, 1).ToString ());
 								cr.Fill ();
 							}
 						}
@@ -270,12 +276,12 @@ namespace gcaliper
 		}
 
 		public int distance {
-			get{
+			get {
 				return part2.rect.X - minX;
-			 }
-			set{
-				part2.rect.X =value+ minX;
-			 }
+			}
+			set {
+				part2.rect.X = value + minX;
+			}
 		}
 
 		public bool debug = false;
@@ -312,7 +318,14 @@ namespace gcaliper
 
 		public int getDistanceToRotationCenter (POINT rootPos)
 		{
-			return (int)Math.Round (Math.Abs (Math.Sqrt (Math.Pow (rootPos.X - rotationCenterRoot.X, 2) + Math.Pow (rootPos.Y - rotationCenterRoot.Y, 2))));
+			//return (int)Math.Round (Math.Abs (Math.Sqrt (Math.Pow (rootPos.X - rotationCenterRoot.X, 2) + Math.Pow (rootPos.Y - rotationCenterRoot.Y, 2))));
+			//rotationCenterImage.X
+
+			int x, y;
+			GetPosition (out x, out y);
+
+			var p=AbsPosToUnrotatedPos (new POINT (rootPos.X-x, rootPos.Y-y));
+			return p.X - rotationCenterImage.X;
 		}
 
 		protected override bool OnMotionNotifyEvent (EventMotion evnt)

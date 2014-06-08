@@ -186,7 +186,7 @@ namespace gcaliper
 			this.r = r;
 			this.g = g;
 			this.b = b;
-			this.a = 1;
+			this.a = 255;
 		}
 
 		public TColor (byte r, byte g, byte b, byte a)
