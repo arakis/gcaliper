@@ -13,12 +13,54 @@ namespace gcaliper
 		public Pixmap maskMap;
 		public ImageSurface image;
 		public TPartList parts = new TPartList ();
+		protected Menu menu;
+		private Style originalStyle;
+		protected bool needRedraw = true;
 
 		public TDrawGroup () : base (Gtk.WindowType.Toplevel)
 		{
+			originalStyle = this.Style.Copy ();
 			Decorated = false;
 			Events = EventMask.AllEventsMask;
+
+			menu = new Menu ();
+			var quitItem = new MenuItem ("Quit");
+			menu.Add(quitItem);
+			quitItem.ButtonReleaseEvent += (o, e) => {
+				if(e.Event.Button==1)
+					Application.Quit();
+			};
+
+			var color1 = new MenuItem ("Color");
+			menu.Add(color1);
+			color1.ButtonReleaseEvent += (o, e) => {
+				if(e.Event.Button==1)
+				{
+					using(var chooser=new ColorSelectionDialog("change color")){
+						//chooser.TransientFor=this;
+						chooser.Style=originalStyle;
+
+						if(chooser.Run()==(int)ResponseType.Ok){
+							foreach(var part in parts){
+								part.applyContrast(new TColor(chooser.ColorSelection.CurrentColor));
+							}
+							invalidateImage();
+						}
+						chooser.Hide();
+					}
+				}
+			};
+
 			setWindowShape ();
+		}
+
+		public void invalidateImage ()
+		{
+			if (needRedraw)
+				return;
+
+			needRedraw = true;
+			QueueDraw ();
 		}
 
 		protected void OnDeleteEvent (object sender, DeleteEventArgs a)
@@ -323,15 +365,6 @@ namespace gcaliper
 			return base.OnMotionNotifyEvent (evnt);
 		}
 
-		public void invalidateImage ()
-		{
-			if (needRedraw)
-				return;
-
-			needRedraw = true;
-			QueueDraw ();
-		}
-
 		protected override bool OnButtonPressEvent (EventButton evnt)
 		{
 			mousePos = new POINT ((int)evnt.X, (int)evnt.Y);
@@ -354,6 +387,10 @@ namespace gcaliper
 				} else if (part1.rect.Contains (mouseImagePos)) {
 					moving = true;
 				}
+			}
+			if (evnt.Button == 3) {
+				this.menu.ShowAll ();
+				this.menu.Popup ();
 			}
 
 			return base.OnButtonPressEvent (evnt);
@@ -452,8 +489,6 @@ namespace gcaliper
 			}
 
 		}
-
-		bool needRedraw = true;
 
 		protected override bool OnExposeEvent (EventExpose evnt)
 		{

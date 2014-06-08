@@ -4,7 +4,6 @@ using Gtk;
 using Gdk;
 using Cairo;
 using System.Drawing;
-
 using POINT = System.Drawing.Point;
 using RECT = System.Drawing.Rectangle;
 
@@ -38,10 +37,10 @@ namespace gcaliper
 			return new POINT ((int)Math.Round (x), (int)Math.Round (y));
 		}
 
-		public static POINT  rotatePoint(POINT p, POINT center,double angle)
+		public static POINT  rotatePoint (POINT p, POINT center, double angle)
 		{
-			double s = Math.Sin(angle);
-			double c = Math.Cos(angle);
+			double s = Math.Sin (angle);
+			double c = Math.Cos (angle);
 
 			// translate point back to origin:
 			p.X -= center.X;
@@ -52,8 +51,8 @@ namespace gcaliper
 			double ynew = p.X * s + p.Y * c;
 
 			// translate point back:
-			p.X = (int)Math.Round(xnew + center.X);
-			p.Y = (int)Math.Round(ynew + center.Y);
+			p.X = (int)Math.Round (xnew + center.X);
+			p.Y = (int)Math.Round (ynew + center.Y);
 
 			return p;
 		}
@@ -143,6 +142,21 @@ namespace gcaliper
 			throw new NotSupportedException ();
 		}
 
+		public unsafe static void setPixel (this ImageSurface buf, int x, int y, TColor c)
+		{
+
+			if (buf.Format == Format.Argb32) {
+				byte* pix = (byte*)(buf.DataPtr + y * buf.Stride + x * 4);
+				*(pix) = c.b;
+				*(pix + 1) = c.g;
+				*(pix + 2) = c.r;
+				*(pix + 3) = c.a;
+				return;
+			}
+
+			throw new NotSupportedException ();
+		}
+
 		public unsafe static void setPixel (this Pixbuf buf, int x, int y, TColor color)
 		{
 			byte* pix = (byte*)(buf.Pixels + y * buf.Rowstride + x * buf.NChannels);
@@ -172,7 +186,7 @@ namespace gcaliper
 			this.r = r;
 			this.g = g;
 			this.b = b;
-			this.a = 0;
+			this.a = 1;
 		}
 
 		public TColor (byte r, byte g, byte b, byte a)
@@ -181,6 +195,14 @@ namespace gcaliper
 			this.g = g;
 			this.b = b;
 			this.a = a;
+		}
+
+		public TColor (Gdk.Color c)
+		{
+			this.r = (byte)Math.Round (((double)byte.MaxValue / (double)ushort.MaxValue * (double)c.Red), 0);
+			this.g = (byte)Math.Round (((double)byte.MaxValue / (double)ushort.MaxValue * (double)c.Green), 0);
+			this.b = (byte)Math.Round (((double)byte.MaxValue / (double)ushort.MaxValue * (double)c.Blue), 0);
+			this.a = 255;
 		}
 
 		public unsafe static TColor fromArgbPointer (IntPtr ptr)
@@ -232,6 +254,10 @@ namespace gcaliper
 
 	public class TPart
 	{
+		public virtual void applyContrast (TColor c)
+		{
+		}
+
 		public ImageSurface image;
 		public bool rotate;
 		//public bool drawNonrotated=false;
@@ -243,10 +269,35 @@ namespace gcaliper
 
 	public class TImagePart : TPart
 	{
+		public override void applyContrast (TColor color)
+		{
+			reloadImage ();
+
+			for (var y = 0; y < image.Height; y++) {
+				for (var x = 0; x < image.Width; x++) {
+					var c = image.getPixel (x, y);
+					if (c.r == 255 && c.g == 0 && c.b == 255 && c.a == 255) {
+						image.setPixel (x, y, color);
+					}
+				}
+			}
+		}
+
+		public string fileName;
+
 		public TImagePart (string file)
 		{
-			image = new ImageSurface (file);
+			this.fileName = file;
+			reloadImage ();
 			rect = new System.Drawing.Rectangle (0, 0, image.Width, image.Height);
+		}
+
+		public void reloadImage ()
+		{
+			if (image != null)
+				image.Dispose ();
+
+			image = new ImageSurface (fileName);
 		}
 	}
 
@@ -268,13 +319,11 @@ namespace gcaliper
 
 	public class TCaliperPart3 : TImagePart
 	{
-
 		public TCaliperPart3 () : base ("../../template/caliper/3.png")
 		{
 			rotate = false;
 			//drawNonrotated = true;
 		}
-
 	}
 }
 
