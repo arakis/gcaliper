@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Gtk;
 using Gdk;
 using Cairo;
@@ -82,6 +83,8 @@ namespace gcaliper
 
 		public TCaliperGroup ()
 		{
+			loadTemplate (System.IO.Path.Combine(templateRootDirectory,"caliper"));
+
 			parts.Add (part1 = new TCaliperPart1 ());
 			parts.Add (part2 = new TCaliperPart2 ());
 			parts.Add (part3 = new TCaliperPart3 ());
@@ -110,10 +113,30 @@ namespace gcaliper
 				}
 			};
 		}
+
+		public string templateRootDirectory { 
+			get {
+				return "../../template";
+			}
+		}
+
+		public void loadTemplate (string templateDir)
+		{
+			var tplFile = System.IO.Path.Combine (templateDir, "template.conf");
+			var ini = new INIFile (tplFile);
+			rotationCenterImage = new POINT (ini.GetValue ("template", "rotationCenterX", 0), ini.GetValue ("template", "rotationCenterY", 0));
+			displayCenterOffset = new POINT (ini.GetValue ("template", "displayCenterX", 0), ini.GetValue ("template", "displayCenterY", 0));
+			ZeroDistanceOffset = ini.GetValue ("template", "ZeroDistanceOffset", 0);
+
+		}
 		// *** configuration ***
-		public POINT rotationCenterImage = new POINT (20, 65);
-		public POINT displayCenterOffset = new POINT (45, 68);
-		public int minX = 15;
+		public POINT rotationCenterImage;
+		// = new POINT (20, 65);
+		public POINT displayCenterOffset;
+		// = new POINT (45, 68);
+		public int ZeroDistanceOffset;
+		// = 15;
+		// ***
 		public int minDistanceForRotation = 50;
 		public double snapAngle = 0.5;
 		private TColor contrastColor = new TColor (150, 0, 0);
@@ -270,10 +293,10 @@ namespace gcaliper
 
 		public int distance {
 			get {
-				return part2.rect.X - minX;
+				return part2.rect.X - ZeroDistanceOffset;
 			}
 			set {
-				part2.rect.X = value + minX;
+				part2.rect.X = value + ZeroDistanceOffset;
 				updatePart4 ();
 			}
 		}
@@ -342,7 +365,7 @@ namespace gcaliper
 
 					part2.rect.X = getDistanceToRotationCenter (rootMousePos);
 					part2.rect.X -= moveMouseXOffset;
-					part2.rect.X = Math.Max (part2.rect.X, minX);
+					part2.rect.X = Math.Max (part2.rect.X, ZeroDistanceOffset);
 					updatePart4 ();
 
 					if (distance > minDistanceForRotation) {
@@ -373,7 +396,8 @@ namespace gcaliper
 			return base.OnMotionNotifyEvent (evnt);
 		}
 
-		private void updatePart4(){
+		private void updatePart4 ()
+		{
 			part4.rect.Width = distance;
 		}
 

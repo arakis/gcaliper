@@ -318,7 +318,7 @@ namespace gcaliper
 
 	public class TCaliperPart1 : TImagePart
 	{
-		public TCaliperPart1 () : base ("../../template/caliper/1.png")
+		public TCaliperPart1 () : base ("../../template/caliper/head.png")
 		{
 			rotate = true;
 		}
@@ -326,7 +326,7 @@ namespace gcaliper
 
 	public class TCaliperPart2 : TImagePart
 	{
-		public TCaliperPart2 () : base ("../../template/caliper/2.png")
+		public TCaliperPart2 () : base ("../../template/caliper/bottom.png")
 		{
 			rotate = true;
 		}
@@ -334,7 +334,7 @@ namespace gcaliper
 
 	public class TCaliperPart3 : TImagePart
 	{
-		public TCaliperPart3 () : base ("../../template/caliper/3.png")
+		public TCaliperPart3 () : base ("../../template/caliper/display.png")
 		{
 			rotate = false;
 			//drawNonrotated = true;
@@ -343,7 +343,7 @@ namespace gcaliper
 
 	public class TCaliperPart4 : TImagePart
 	{
-		public TCaliperPart4 () : base ("../../template/caliper/4.png")
+		public TCaliperPart4 () : base ("../../template/caliper/scale.png")
 		{
 			rotate = true;
 			//drawNonrotated = true;
