@@ -76,24 +76,23 @@ namespace gcaliper
 
 	public class TCaliperGroup : TDrawGroup
 	{
-		public TCaliperPart1 part1;
-		public TCaliperPart2 part2;
-		public TCaliperPart3 part3;
-		public TCaliperPart4 part4;
+		public TCaliperPartHead partHead;
+		public TCaliperPartBottom partBottom;
+		public TCaliperPartDisplay partDisplay;
+		public TCaliperPartScale partScale;
 
 		public TCaliperGroup ()
 		{
-			loadTemplate (System.IO.Path.Combine(templateRootDirectory,"caliper"));
+			loadTemplate (System.IO.Path.Combine (templateRootDirectory, "caliper"));
 
-			parts.Add (part1 = new TCaliperPart1 ());
-			parts.Add (part2 = new TCaliperPart2 ());
-			parts.Add (part3 = new TCaliperPart3 ());
-			parts.Add (part4 = new TCaliperPart4 ());
+			parts.Add (partHead = new TCaliperPartHead ());
+			parts.Add (partBottom = new TCaliperPartBottom ());
+			parts.Add (partDisplay = new TCaliperPartDisplay ());
+			parts.Add (partScale = new TCaliperPartScale ());
 
 			//part2.rect.Y = 20;
 			distance = 100;
-			part4.rect.X = 52;
-			part4.rect.Y = 47;
+			partScale.rect.Location = scaleOffset;
 
 			setContrastColor (contrastColor);
 
@@ -126,12 +125,14 @@ namespace gcaliper
 			var ini = new INIFile (tplFile);
 			rotationCenterImage = new POINT (ini.GetValue ("template", "rotationCenterX", 0), ini.GetValue ("template", "rotationCenterY", 0));
 			displayCenterOffset = new POINT (ini.GetValue ("template", "displayCenterX", 0), ini.GetValue ("template", "displayCenterY", 0));
-			ZeroDistanceOffset = ini.GetValue ("template", "ZeroDistanceOffset", 0);
+			scaleOffset = new POINT (ini.GetValue ("template", "scaleOffsetX", 0), ini.GetValue ("template", "scaleOffsetY", 0));
+			ZeroDistanceOffset = ini.GetValue ("template", "zeroDistanceOffset", 0);
 
 		}
 		// *** configuration ***
 		public POINT rotationCenterImage;
 		// = new POINT (20, 65);
+		public POINT scaleOffset;
 		public POINT displayCenterOffset;
 		// = new POINT (45, 68);
 		public int ZeroDistanceOffset;
@@ -240,7 +241,7 @@ namespace gcaliper
 						if (!part.rotate) {
 							cr.Matrix = new Matrix ();
 
-							var c = new POINT (part2.rect.Location.X + displayCenterOffset.X, part2.rect.Location.Y + displayCenterOffset.Y);
+							var c = new POINT (partBottom.rect.Location.X + displayCenterOffset.X, partBottom.rect.Location.Y + displayCenterOffset.Y);
 
 							part.rect.X = c.X;
 							part.rect.Y = c.Y;
@@ -293,10 +294,10 @@ namespace gcaliper
 
 		public int distance {
 			get {
-				return part2.rect.X - ZeroDistanceOffset;
+				return partBottom.rect.X - ZeroDistanceOffset;
 			}
 			set {
-				part2.rect.X = value + ZeroDistanceOffset;
+				partBottom.rect.X = value + ZeroDistanceOffset;
 				updatePart4 ();
 			}
 		}
@@ -353,7 +354,7 @@ namespace gcaliper
 			mouseImagePos = AbsPosToUnrotatedPos (mousePos);
 
 			if (debug) {
-				debugText = part2.rect.Contains (mouseImagePos).ToString ();
+				debugText = partBottom.rect.Contains (mouseImagePos).ToString ();
 				debugPoint = mouseImagePos;
 				invalidateImage ();
 			}
@@ -363,9 +364,9 @@ namespace gcaliper
 			if (resizing) {
 				if (Math.Abs (relMousePos.X) > 10 || Math.Abs (relMousePos.Y) > 10) {
 
-					part2.rect.X = getDistanceToRotationCenter (rootMousePos);
-					part2.rect.X -= moveMouseXOffset;
-					part2.rect.X = Math.Max (part2.rect.X, ZeroDistanceOffset);
+					partBottom.rect.X = getDistanceToRotationCenter (rootMousePos);
+					partBottom.rect.X -= moveMouseXOffset;
+					partBottom.rect.X = Math.Max (partBottom.rect.X, ZeroDistanceOffset);
 					updatePart4 ();
 
 					if (distance > minDistanceForRotation) {
@@ -398,7 +399,7 @@ namespace gcaliper
 
 		private void updatePart4 ()
 		{
-			part4.rect.Width = distance;
+			partScale.rect.Width = distance;
 		}
 
 		protected override bool OnButtonPressEvent (EventButton evnt)
@@ -412,15 +413,15 @@ namespace gcaliper
 
 				startWinPos = new POINT (x, y);
 				startRootMousePos = new POINT ((int)evnt.XRoot, (int)evnt.YRoot);
-				startRectPos = part2.rect.Location;
+				startRectPos = partBottom.rect.Location;
 
-				if (part2.rect.Contains (mouseImagePos)) {
+				if (partBottom.rect.Contains (mouseImagePos)) {
 					resizing = true;
 
-					moveMouseXOffset = getDistanceToRotationCenter (startRootMousePos) - part2.rect.X;
+					moveMouseXOffset = getDistanceToRotationCenter (startRootMousePos) - partBottom.rect.X;
 					moveMouseAngleOffset = funcs.GetAngleOfLineBetweenTwoPoints (rotationCenterRoot, startRootMousePos) - angle;
 
-				} else if (part1.rect.Contains (mouseImagePos)) {
+				} else if (partHead.rect.Contains (mouseImagePos)) {
 					moving = true;
 				}
 			}
