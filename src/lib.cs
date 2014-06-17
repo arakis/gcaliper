@@ -18,6 +18,10 @@ namespace gcaliper
 			return Math.Atan2 (yDiff, xDiff); 
 		}
 
+		public static POINT add(this POINT p, int x, int y) {
+			return new POINT (p.X+x, p.Y+y);
+		}
+
 		public static void showMessage (string txt)
 		{
 			new MessageDialog (null, DialogFlags.Modal, MessageType.Other, ButtonsType.Ok, txt).Show ();

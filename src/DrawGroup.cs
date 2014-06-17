@@ -17,6 +17,7 @@ namespace gcaliper
 		protected Menu menu;
 		protected Style originalStyle;
 		protected bool needRedraw = true;
+		//protected StatusIcon statusIcon;
 
 		public TDrawGroup () : base (Gtk.WindowType.Toplevel)
 		{
@@ -24,7 +25,22 @@ namespace gcaliper
 			Decorated = false;
 			Events = EventMask.AllEventsMask;
 
+			//statusIcon = new StatusIcon ("../../appicon.ico");
+			//statusIcon.Tooltip = "gcaliper";
+			SetIconFromFile ("../../appicon.ico");
+
 			menu = new Menu ();
+
+			var minItem = new MenuItem ("Minimize");
+			menu.Add (minItem);
+			minItem.ButtonReleaseEvent += (o, e) => {
+				if (e.Event.Button == 1){
+					Iconify();
+					//statusIcon.Visible=true;
+					//Hide();
+				}
+			};
+
 			var quitItem = new MenuItem ("Quit");
 			menu.Add (quitItem);
 			quitItem.ButtonReleaseEvent += (o, e) => {
@@ -127,8 +143,8 @@ namespace gcaliper
 			displayCenterOffset = new POINT (ini.GetValue ("template", "displayCenterX", 0), ini.GetValue ("template", "displayCenterY", 0));
 			scaleOffset = new POINT (ini.GetValue ("template", "scaleOffsetX", 0), ini.GetValue ("template", "scaleOffsetY", 0));
 			ZeroDistanceOffset = ini.GetValue ("template", "zeroDistanceOffset", 0);
-
 		}
+
 		// *** configuration ***
 		public POINT rotationCenterImage;
 		// = new POINT (20, 65);
@@ -297,8 +313,12 @@ namespace gcaliper
 				return partBottom.rect.X - ZeroDistanceOffset;
 			}
 			set {
+				if (distance == value)
+					return;
+				value = Math.Max (value, 0);
 				partBottom.rect.X = value + ZeroDistanceOffset;
 				updatePart4 ();
+				invalidateImage ();
 			}
 		}
 
@@ -421,7 +441,7 @@ namespace gcaliper
 					moveMouseXOffset = getDistanceToRotationCenter (startRootMousePos) - partBottom.rect.X;
 					moveMouseAngleOffset = funcs.GetAngleOfLineBetweenTwoPoints (rotationCenterRoot, startRootMousePos) - angle;
 
-				} else if (partHead.rect.Contains (mouseImagePos)) {
+				} else if (partHead.rect.Contains (mouseImagePos) || partScale.rect.Contains (mouseImagePos)) {
 					moving = true;
 				}
 			}
@@ -431,6 +451,45 @@ namespace gcaliper
 			}
 
 			return base.OnButtonPressEvent (evnt);
+		}
+
+		protected override bool OnKeyPressEvent (EventKey e)
+		{
+			var step = 1;
+			var stepY = 0;
+
+			if ((e.State & ModifierType.ShiftMask) == ModifierType.ShiftMask)
+				step = 20;
+
+			if (e.Key == Gdk.Key.Left || e.Key == Gdk.Key.Right || e.Key == Gdk.Key.Up || e.Key == Gdk.Key.Down) {
+
+				if (e.Key == Gdk.Key.Left || e.Key == Gdk.Key.Up)
+					step = -step;
+
+				if (e.Key == Gdk.Key.Up || e.Key == Gdk.Key.Down) {
+					stepY = step;
+					step = 0;
+				}
+
+				if ((e.State & ModifierType.ControlMask) == ModifierType.ControlMask) {
+					distance += step;
+				} else {
+					setWindowPosition (getWindowPosition ().add (step, stepY));
+				}
+			}
+			return base.OnKeyPressEvent (e);
+		}
+
+		private POINT getWindowPosition ()
+		{
+			int x, y;
+			GetPosition (out x, out y);
+			return new POINT (x, y);
+		}
+
+		private void setWindowPosition (POINT p)
+		{
+			Move (p.X, p.Y);
 		}
 
 		protected override bool OnButtonReleaseEvent (EventButton evnt)
