@@ -1,10 +1,10 @@
 ﻿<Properties GitUserInfo="UsingGIT">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="src/DrawGroup.cs">
+  <MonoDevelop.Ide.Workbench>
     <Files>
       <File FileName="src/Program.cs" Line="1" Column="1" />
-      <File FileName="src/lib.cs" Line="88" Column="39" />
-      <File FileName="src/DrawGroup.cs" Line="14" Column="10" />
+      <File FileName="src/lib.cs" Line="350" Column="40" />
+      <File FileName="src/DrawGroup.cs" Line="30" Column="40" />
       <File FileName="../../.cache/.fr-yTPVD4/INIFileTest/STA_INIFile.cs" Line="1" Column="1" />
       <File FileName="src/template/caliper/template.conf" Line="13" Column="1" />
     </Files>
@@ -12,7 +12,14 @@
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Option id="ShowAllFiles" value="True" />
-          <Node name="gcaliper" expanded="True" selected="True" />
+          <Node name="gcaliper" expanded="True" />
+        </State>
+      </Pad>
+      <Pad Id="MonoDevelop.Debugger.WatchPad">
+        <State>
+          <Value>ini</Value>
+          <Value>System.IO.File.Exists(m_FileName)</Value>
+          <Value>sr</Value>
         </State>
       </Pad>
     </Pads>

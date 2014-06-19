@@ -18,7 +18,6 @@ namespace gcaliper
 		protected Style originalStyle;
 		protected bool needRedraw = true;
 		//protected StatusIcon statusIcon;
-
 		public TDrawGroup () : base (Gtk.WindowType.Toplevel)
 		{
 			originalStyle = this.Style.Copy ();
@@ -34,8 +33,8 @@ namespace gcaliper
 			var minItem = new MenuItem ("Minimize");
 			menu.Add (minItem);
 			minItem.ButtonReleaseEvent += (o, e) => {
-				if (e.Event.Button == 1){
-					Iconify();
+				if (e.Event.Button == 1) {
+					Iconify ();
 					//statusIcon.Visible=true;
 					//Hide();
 				}
@@ -101,8 +100,8 @@ namespace gcaliper
 		{
 			loadTemplate (System.IO.Path.Combine (templateRootDirectory, "caliper"));
 
-			parts.Add (partHead = new TCaliperPartHead ());
 			parts.Add (partBottom = new TCaliperPartBottom ());
+			parts.Add (partHead = new TCaliperPartHead ());
 			parts.Add (partDisplay = new TCaliperPartDisplay ());
 			parts.Add (partScale = new TCaliperPartScale ());
 
@@ -144,7 +143,6 @@ namespace gcaliper
 			scaleOffset = new POINT (ini.GetValue ("template", "scaleOffsetX", 0), ini.GetValue ("template", "scaleOffsetY", 0));
 			ZeroDistanceOffset = ini.GetValue ("template", "zeroDistanceOffset", 0);
 		}
-
 		// *** configuration ***
 		public POINT rotationCenterImage;
 		// = new POINT (20, 65);
@@ -277,11 +275,11 @@ namespace gcaliper
 								cr.Rectangle (new Cairo.Rectangle (p.X, p.Y, part.rect.Width, part.rect.Height));
 								cr.Fill ();
 
-								cr.SetSourceRGBA (0, 1, 0, 1);
+								cr.SetSourceRGBA (0, 0, 0, 1);
 								cr.SelectFontFace ("Arial", FontSlant.Normal, FontWeight.Normal);
 								cr.SetFontSize (10);
-								cr.MoveTo (p.X + 10, p.Y + 25);
-								cr.ShowText (distance.ToString () + " " + Math.Round (angle, 1).ToString ());
+								cr.MoveTo (p.X + 12, p.Y + 27.2);
+								cr.ShowText (distance.ToString ());
 								cr.Fill ();
 							}
 						}
@@ -393,12 +391,16 @@ namespace gcaliper
 						tmpAngle = funcs.GetAngleOfLineBetweenTwoPoints (rotationCenterRoot, rootMousePos);
 						tmpAngle -= moveMouseAngleOffset;
 
-						var angleMarkers = new double[]{ 0, Math.PI / 2, Math.PI, -Math.PI, -(Math.PI / 2) };
+						if ((evnt.State & ModifierType.ControlMask) == ModifierType.ControlMask) {
+							angle = tmpAngle;
+						} else {
+							var angleMarkers = new double[]{ 0, Math.PI / 2, Math.PI, -Math.PI, -(Math.PI / 2) };
 
-						for (var i = 0; i < angleMarkers.Length; i++) {
-							var a = angleMarkers [i];
-							if (tmpAngle < a + snapAngle && tmpAngle > a - snapAngle) {
-								angle = a;
+							for (var i = 0; i < angleMarkers.Length; i++) {
+								var a = angleMarkers [i];
+								if (tmpAngle < a + snapAngle && tmpAngle > a - snapAngle) {
+									angle = a;
+								}
 							}
 						}
 					}
