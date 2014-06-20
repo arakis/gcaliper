@@ -13,6 +13,8 @@ BIN_DEST = ${DESTDIR}/usr/bin/
 .PHONY: install
 
 install:
+	mdtool build solution.sln
+
 	install -d $(APP_DEST)
 	install -d $(APP_DEST)bin
 	
