@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using IO = System.IO;
 using Gtk;
 using Gdk;
 using Cairo;
@@ -322,7 +323,7 @@ namespace gcaliper
 
 	public class TCaliperPartHead : TImagePart
 	{
-		public TCaliperPartHead () : base ("../themes/caliper/head.png")
+		public TCaliperPartHead () : base (IO.Path.Combine(AppConfig.currThemeDir, "head.png"))
 		{
 			rotate = true;
 		}
@@ -330,7 +331,7 @@ namespace gcaliper
 
 	public class TCaliperPartBottom : TImagePart
 	{
-		public TCaliperPartBottom () : base ("../themes/caliper/bottom.png")
+		public TCaliperPartBottom () : base (IO.Path.Combine(AppConfig.currThemeDir, "bottom.png"))
 		{
 			rotate = true;
 		}
@@ -338,7 +339,7 @@ namespace gcaliper
 
 	public class TCaliperPartDisplay : TImagePart
 	{
-		public TCaliperPartDisplay () : base ("../themes/caliper/display.png")
+		public TCaliperPartDisplay () : base (IO.Path.Combine(AppConfig.currThemeDir, "display.png"))
 		{
 			rotate = false;
 			//drawNonrotated = true;
@@ -347,7 +348,7 @@ namespace gcaliper
 
 	public class TCaliperPartScale : TImagePart
 	{
-		public TCaliperPartScale () : base ("../themes/caliper/scale.png")
+		public TCaliperPartScale () : base (IO.Path.Combine(AppConfig.currThemeDir, "scale.png"))
 		{
 			rotate = true;
 			//drawNonrotated = true;

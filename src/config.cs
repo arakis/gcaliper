@@ -27,6 +27,20 @@ namespace gcaliper
 			}
 		}
 
+		public static string themesDir { 
+			get
+			{
+				return Path.Combine(appRootDir,"themes");
+			} 
+		}
+
+		public static string currThemeDir { 
+			get
+			 {
+				return Path.Combine(themesDir,themeName);
+			} 
+		 }
+
 		public static void init ()
 		{
 			appRootDir = new DirectoryInfo (Path.GetDirectoryName (typeof(Program).Assembly.Location)).Parent.FullName + Path.DirectorySeparatorChar;
