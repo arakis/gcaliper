@@ -9,12 +9,17 @@ namespace gcaliper
 	{
 		public static void Main (string[] args)
 		{
-			Application.Init ();
-			var win = new TCaliperGroup ();
-			win.Show ();
-
-			Application.Run ();
+			try {
+				Application.Init ();
+				var win = new TCaliperGroup ();
+				win.Show ();
+				GLib.ExceptionManager.UnhandledException += (e) => {
+					System.IO.File.AppendAllText ("gcaliper.error.log", e.ToString ());
+				};
+				Application.Run ();
+			} catch (Exception e) {
+				System.IO.File.AppendAllText ("gcaliper.error.log", e.ToString ());
+			}
 		}
-
 	}
 }

@@ -24,7 +24,7 @@ namespace gcaliper
 
 		public static void showMessage (string txt)
 		{
-			new MessageDialog (null, DialogFlags.Modal, MessageType.Other, ButtonsType.Ok, txt).Show ();
+			new MessageDialog (null, DialogFlags.Modal, MessageType.Error, ButtonsType.Ok, txt).ShowAll();
 		}
 
 		public static PointF rotatePoint (PointF p, PointF center, double angle)
@@ -322,7 +322,7 @@ namespace gcaliper
 
 	public class TCaliperPartHead : TImagePart
 	{
-		public TCaliperPartHead () : base ("../../template/caliper/head.png")
+		public TCaliperPartHead () : base ("../themes/caliper/head.png")
 		{
 			rotate = true;
 		}
@@ -330,7 +330,7 @@ namespace gcaliper
 
 	public class TCaliperPartBottom : TImagePart
 	{
-		public TCaliperPartBottom () : base ("../../template/caliper/bottom.png")
+		public TCaliperPartBottom () : base ("../themes/caliper/bottom.png")
 		{
 			rotate = true;
 		}
@@ -338,7 +338,7 @@ namespace gcaliper
 
 	public class TCaliperPartDisplay : TImagePart
 	{
-		public TCaliperPartDisplay () : base ("../../template/caliper/display.png")
+		public TCaliperPartDisplay () : base ("../themes/caliper/display.png")
 		{
 			rotate = false;
 			//drawNonrotated = true;
@@ -347,7 +347,7 @@ namespace gcaliper
 
 	public class TCaliperPartScale : TImagePart
 	{
-		public TCaliperPartScale () : base ("../../template/caliper/scale.png")
+		public TCaliperPartScale () : base ("../themes/caliper/scale.png")
 		{
 			rotate = true;
 			//drawNonrotated = true;

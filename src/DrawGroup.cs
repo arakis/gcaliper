@@ -24,9 +24,9 @@ namespace gcaliper
 			Decorated = false;
 			Events = EventMask.AllEventsMask;
 
-			//statusIcon = new StatusIcon ("../../appicon.ico");
+			//statusIcon = new StatusIcon ("../appicon.ico");
 			//statusIcon.Tooltip = "gcaliper";
-			SetIconFromFile ("../../appicon.ico");
+			SetIconFromFile ("../appicon.ico");
 
 			menu = new Menu ();
 
@@ -98,7 +98,7 @@ namespace gcaliper
 
 		public TCaliperGroup ()
 		{
-			loadTemplate (System.IO.Path.Combine (templateRootDirectory, "caliper"));
+			loadTheme (System.IO.Path.Combine (themesRootDirectory, "caliper"));
 
 			parts.Add (partBottom = new TCaliperPartBottom ());
 			parts.Add (partHead = new TCaliperPartHead ());
@@ -128,20 +128,20 @@ namespace gcaliper
 			};
 		}
 
-		public string templateRootDirectory { 
+		public string themesRootDirectory { 
 			get {
-				return "../../template";
+				return "../themes";
 			}
 		}
 
-		public void loadTemplate (string templateDir)
+		public void loadTheme (string themeDir)
 		{
-			var tplFile = System.IO.Path.Combine (templateDir, "template.conf");
-			var ini = new INIFile (tplFile);
-			rotationCenterImage = new POINT (ini.GetValue ("template", "rotationCenterX", 0), ini.GetValue ("template", "rotationCenterY", 0));
-			displayCenterOffset = new POINT (ini.GetValue ("template", "displayCenterX", 0), ini.GetValue ("template", "displayCenterY", 0));
-			scaleOffset = new POINT (ini.GetValue ("template", "scaleOffsetX", 0), ini.GetValue ("template", "scaleOffsetY", 0));
-			ZeroDistanceOffset = ini.GetValue ("template", "zeroDistanceOffset", 0);
+			var themeFile = System.IO.Path.Combine (themeDir, "theme.conf");
+			var ini = new INIFile (themeFile);
+			rotationCenterImage = new POINT (ini.GetValue ("theme", "rotationCenterX", 0), ini.GetValue ("theme", "rotationCenterY", 0));
+			displayCenterOffset = new POINT (ini.GetValue ("theme", "displayCenterX", 0), ini.GetValue ("theme", "displayCenterY", 0));
+			scaleOffset = new POINT (ini.GetValue ("theme", "scaleOffsetX", 0), ini.GetValue ("theme", "scaleOffsetY", 0));
+			ZeroDistanceOffset = ini.GetValue ("theme", "zeroDistanceOffset", 0);
 		}
 		// *** configuration ***
 		public POINT rotationCenterImage;
