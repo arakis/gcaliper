@@ -6,6 +6,7 @@ using Gdk;
 using Cairo;
 using POINT = System.Drawing.Point;
 using RECT = System.Drawing.Rectangle;
+using IO = System.IO;
 
 namespace gcaliper
 {
@@ -26,7 +27,7 @@ namespace gcaliper
 
 			//statusIcon = new StatusIcon ("../appicon.ico");
 			//statusIcon.Tooltip = "gcaliper";
-			SetIconFromFile ("../appicon.ico");
+			SetIconFromFile (IO.Path.Combine (AppConfig.appRootDir, "appicon.ico"));
 
 			menu = new Menu ();
 
@@ -65,6 +66,12 @@ namespace gcaliper
 			a.RetVal = true;
 		}
 
+		protected override void OnHidden ()
+		{
+			Application.Quit ();
+			base.OnHidden ();
+		}
+
 		public void setWindowShape ()
 		{
 			this.ShapeCombineMask (maskMap, 0, 0);
@@ -98,7 +105,7 @@ namespace gcaliper
 
 		public TCaliperGroup ()
 		{
-			loadTheme (System.IO.Path.Combine (themesRootDirectory, "caliper"));
+			loadTheme (System.IO.Path.Combine (themesRootDirectory, AppConfig.themeName));
 
 			parts.Add (partBottom = new TCaliperPartBottom ());
 			parts.Add (partHead = new TCaliperPartHead ());
@@ -109,7 +116,7 @@ namespace gcaliper
 			distance = 100;
 			partScale.rect.Location = scaleOffset;
 
-			setContrastColor (contrastColor);
+			setContrastColor (jawColor);
 
 			var color1 = new MenuItem ("Color");
 			menu.Insert (color1, 0);
@@ -120,7 +127,9 @@ namespace gcaliper
 						chooser.Style = originalStyle;
 
 						if (chooser.Run () == (int)ResponseType.Ok) {
-							setContrastColor (new TColor (chooser.ColorSelection.CurrentColor));
+							AppConfig.jawColor = new TColor (chooser.ColorSelection.CurrentColor);
+							AppConfig.save ();
+							setContrastColor (AppConfig.jawColor);
 						}
 						chooser.Hide ();
 					}
@@ -130,13 +139,13 @@ namespace gcaliper
 
 		public string themesRootDirectory { 
 			get {
-				return "../themes";
+				return IO.Path.Combine (AppConfig.appRootDir, "themes");
 			}
 		}
 
 		public void loadTheme (string themeDir)
 		{
-			var themeFile = System.IO.Path.Combine (themeDir, "theme.conf");
+			var themeFile = IO.Path.Combine (themeDir, "theme.conf");
 			var ini = new INIFile (themeFile);
 			rotationCenterImage = new POINT (ini.GetValue ("theme", "rotationCenterX", 0), ini.GetValue ("theme", "rotationCenterY", 0));
 			displayCenterOffset = new POINT (ini.GetValue ("theme", "displayCenterX", 0), ini.GetValue ("theme", "displayCenterY", 0));
@@ -152,20 +161,20 @@ namespace gcaliper
 		public int ZeroDistanceOffset;
 		// = 15;
 		// ***
-		public int minDistanceForRotation = 50;
+		public int minDistanceForRotation = 25;
 		public double snapAngle = 0.5;
-		private TColor contrastColor = new TColor (150, 0, 0);
+		private TColor jawColor = AppConfig.jawColor;
 		double angle = 0.0174532925 * 0;
 		// ***
 		double tmpAngle = 0;
 		public RECT unrotatedRect;
 		public RECT rotatedRect;
-		public POINT rotationCenterRoot = new POINT (1920 + 1920 / 2, 1200 / 2);
+		public POINT rotationCenterRoot; // = new POINT (1920 + 1920 / 2, 1200 / 2);
 		public POINT rotationCenterZero = new POINT (0, 0);
 
 		public void setContrastColor (TColor color)
 		{
-			contrastColor = color;
+			jawColor = color;
 			foreach (var part in parts) {
 				part.applyContrast (color);
 			}
@@ -279,7 +288,9 @@ namespace gcaliper
 								cr.SelectFontFace ("Arial", FontSlant.Normal, FontWeight.Normal);
 								cr.SetFontSize (10);
 								cr.MoveTo (p.X + 12, p.Y + 27.2);
-								cr.ShowText (distance.ToString ());
+								var text = distance.ToString ();
+								//text += " " + angle.ToString ();
+								cr.ShowText (text);
 								cr.Fill ();
 							}
 						}
@@ -391,6 +402,11 @@ namespace gcaliper
 						tmpAngle = funcs.GetAngleOfLineBetweenTwoPoints (rotationCenterRoot, rootMousePos);
 						tmpAngle -= moveMouseAngleOffset;
 
+						if (tmpAngle >= Math.PI)
+							tmpAngle -= Math.PI * 2;
+						if (tmpAngle <= -Math.PI)
+							tmpAngle += Math.PI * 2;
+
 						if ((evnt.State & ModifierType.ControlMask) == ModifierType.ControlMask) {
 							angle = tmpAngle;
 						} else {
@@ -398,8 +414,9 @@ namespace gcaliper
 
 							for (var i = 0; i < angleMarkers.Length; i++) {
 								var a = angleMarkers [i];
-								if (tmpAngle < a + snapAngle && tmpAngle > a - snapAngle) {
+								if (tmpAngle <= a + snapAngle && tmpAngle >= a - snapAngle) {
 									angle = a;
+									break;
 								}
 							}
 						}
