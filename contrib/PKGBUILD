@@ -3,7 +3,7 @@
 pkgname=gcaliper
 pkgver=1.0.2
 pkgrel=1
-pkgdesc="Professional screen caliper and ruler with arbitrary rotation"
+pkgdesc="Professional screen caliper and ruler with variable rotation"
 url="https://github.com/Arakis/gcaliper"
 license=("BSD")
 depends=("mono" "gtk-sharp-2")
