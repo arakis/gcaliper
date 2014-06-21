@@ -33,4 +33,4 @@ install:
 	install -d $(BIN_DEST)
 	install -m755 $(CONTRIB_SRC)gcaliper $(BIN_DEST)
 
-	install -D -m644 $(CONTRIB_SRC)gcaliper.desktop /usr/share/applications
+	install -D -m644 $(CONTRIB_SRC)gcaliper.desktop ${DESTDIR}/usr/share/applications
