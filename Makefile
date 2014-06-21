@@ -14,7 +14,7 @@ BIN_DEST = ${DESTDIR}/usr/bin/
 .PHONY: compile
 
 compile:
-        mdtool build solution.sln
+	mdtool build solution.sln
 
 install:
 	install -d $(APP_DEST)
