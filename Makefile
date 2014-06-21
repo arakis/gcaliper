@@ -1,7 +1,7 @@
 APP_SRC = src/
 APP_DEST = ${DESTDIR}/usr/share/gcaliper/
 
-BIN_SRC = contrib/bin/
+BIN_SRC = contrib/
 BIN_DEST = ${DESTDIR}/usr/bin/
 
 #APP_SRC = src/
