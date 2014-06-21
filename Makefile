@@ -1,3 +1,5 @@
+CONTRIB_SRC = contrib/
+
 APP_SRC = src/
 APP_DEST = ${DESTDIR}/usr/share/gcaliper/
 
@@ -29,6 +31,6 @@ install:
 	install -D -m644 $(APP_SRC)themes/caliper/*.conf $(APP_DEST)themes/caliper
 
 	install -d $(BIN_DEST)
-	install -m755 $(APP_SRC)contrib/gcaliper $(BIN_DEST)
+	install -m755 $(CONTRIB_SRC)gcaliper $(BIN_DEST)
 
-	install -D -m644 $(APP_SRC)contrib/gcaliper.desktop /usr/share/applications
+	install -D -m644 $(CONTRIB_SRC)gcaliper.desktop /usr/share/applications
