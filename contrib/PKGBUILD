@@ -14,11 +14,6 @@ source=("git://github.com/Arakis/gcaliper.git")
 arch=(any)
 md5sums=("SKIP")
 
-#pkgver() {
-#  cd exec-or-activate-application
-#  git rev-list HEAD --count
-#}
-
 build() {
   cd gcaliper
   make DESTDIR="$pkgdir"
