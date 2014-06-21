@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=gCaliper
+Comment=Screen caliper and ruler
+Exec=gcaliper
+Terminal=false
+Type=Application
+#Icon=qemu-launcher.svg
+StartupNotify=true
+Categories=Utility
+
