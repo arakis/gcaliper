@@ -11,10 +11,12 @@ BIN_DEST = ${DESTDIR}/usr/bin/
 #BIN_DEST = /tmp/make/usr/bin/
 
 .PHONY: install
+.PHONY: compile
+
+compile:
+        mdtool build solution.sln
 
 install:
-	mdtool build solution.sln
-
 	install -d $(APP_DEST)
 	install -d $(APP_DEST)bin
 	
