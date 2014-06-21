@@ -3,10 +3,10 @@
 pkgname=gcaliper
 pkgver=1.0.2
 pkgrel=1
-pkgdesc="Checks, if a specific application is running. If so, the window will focused. If not, the application will be launched."
+pkgdesc="Professional screen caliper and ruler with arbitrary rotation"
 url="https://github.com/Arakis/gcaliper"
 license=("BSD")
-depends=("mono")
+depends=("mono", "gtk-sharp-2")
 makedepends=("git")
 provides=("gcaliper")
 conflicts=("gcaliper")
@@ -18,6 +18,11 @@ md5sums=("SKIP")
 #  cd exec-or-activate-application
 #  git rev-list HEAD --count
 #}
+
+build() {
+  cd gcaliper
+  make DESTDIR="$pkgdir"
+}
 
 package() {
   cd gcaliper
