@@ -6,8 +6,8 @@ pkgrel=1
 pkgdesc="Professional screen caliper and ruler with arbitrary rotation"
 url="https://github.com/Arakis/gcaliper"
 license=("BSD")
-depends=("mono", "gtk-sharp-2")
-makedepends=("git")
+depends=("mono" "gtk-sharp-2")
+makedepends=("git" "monodevelop>=4")
 provides=("gcaliper")
 conflicts=("gcaliper")
 source=("git://github.com/Arakis/gcaliper.git")
