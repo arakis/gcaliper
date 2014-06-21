@@ -14,3 +14,4 @@ Documentation
 * Use Control+Left/Right to resize
 * Use Shift for bigger steps
 * Use Control while rotation for arbitrary angle
+* Right click for context menu
