@@ -152,22 +152,26 @@ namespace gcaliper
             color1.ButtonReleaseEvent += (o, e) =>
             {
                 if (e.Event.Button == 1)
-                {
-                    using (var chooser = new ColorSelectionDialog("change color"))
-                    {
-                        //chooser.TransientFor=this;
-                        chooser.Style = originalStyle;
-
-                        if (chooser.Run() == (int)ResponseType.Ok)
-                        {
-                            AppConfig.jawColor = new TColor(chooser.ColorSelection.CurrentColor);
-                            AppConfig.save();
-                            setContrastColor(AppConfig.jawColor);
-                        }
-                        chooser.Hide();
-                    }
-                }
+                    showColorChooser();
+                
             };
+        }
+
+        public void showColorChooser()
+        {
+            using (var chooser = new ColorSelectionDialog("change color"))
+            {
+                //chooser.TransientFor=this;
+                chooser.Style = originalStyle;
+
+                if (chooser.Run() == (int)ResponseType.Ok)
+                {
+                    AppConfig.jawColor = new TColor(chooser.ColorSelection.CurrentColor);
+                    AppConfig.save();
+                    setContrastColor(AppConfig.jawColor);
+                }
+                chooser.Hide();
+            }
         }
 
         public string themesRootDirectory
@@ -647,9 +651,19 @@ namespace gcaliper
                 var mon = Screen.GetMonitorAtWindow(GdkWindow);
                 var geo = Screen.GetMonitorGeometry(mon);
                 if (angle == 0)
-                        distance = geo.Width - 200;
+                    distance = geo.Width - 200;
                 else
-                        distance = geo.Height - 200;
+                    distance = geo.Height - 200;
+            }
+
+            if (e.Key == Gdk.Key.c)
+            {
+                showColorChooser();
+            }
+
+            if ((e.Key == Gdk.Key.q || e.Key == Gdk.Key.w) && (e.State & ModifierType.ControlMask) == ModifierType.ControlMask)
+            {
+                Application.Quit();
             }
 
             return base.OnKeyPressEvent(e);
