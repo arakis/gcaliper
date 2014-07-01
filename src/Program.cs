@@ -1,3 +1,27 @@
+/*******************************************************************************************************
+
+  Copyright (C) Sebastian Loncar, Web: http://loncar.de
+  Project: https://github.com/Arakis/gcaliper
+
+  MIT License:
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+  associated documentation files (the "Software"), to deal in the Software without restriction, 
+  including without limitation the rights to use, copy, modify, merge, publish, distribute,
+  sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in all copies or substantial
+  portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+  NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES
+  OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+*******************************************************************************************************/
+
 using System;
 using System.IO;
 using Gtk;
@@ -7,31 +31,35 @@ using IO = System.IO;
 
 namespace gcaliper
 {
-	class Program
-	{
+    class Program
+    {
 
-		public static void Main (string[] args)
-		{
-			Environment.CurrentDirectory = "/";
+        public static void Main(string[] args)
+        {
+            Environment.CurrentDirectory = "/";
 
-			try {
+            try
+            {
 
-				GLib.ExceptionManager.UnhandledException += (e) => {
-					IO.File.AppendAllText ("gcaliper.error.log", e.ToString ());
-				};
+                GLib.ExceptionManager.UnhandledException += (e) =>
+                {
+                    IO.File.AppendAllText("gcaliper.error.log", e.ToString());
+                };
 
-				Application.Init ();
-				AppConfig.init();
+                Application.Init();
+                AppConfig.init();
 
-				var win = new TCaliperGroup ();
-				win.Show ();
+                var win = new TCaliperGroup();
+                win.Show();
 
-				Application.Run ();
+                Application.Run();
 
-			} catch (Exception e) {
-				IO.File.AppendAllText ("gcaliper.error.log", e.ToString ());
-			}
-		}
+            }
+            catch (Exception e)
+            {
+                IO.File.AppendAllText("gcaliper.error.log", e.ToString());
+            }
+        }
 
-	}
+    }
 }
