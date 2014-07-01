@@ -632,6 +632,26 @@ namespace gcaliper
                 setAngle(0);
             }
 
+            if (e.Key == Gdk.Key.n)
+            {
+                Iconify();
+            }
+
+            if (e.Key == Gdk.Key.Home)
+            {
+                distance = 0;
+            }
+
+            if (e.Key == Gdk.Key.End)
+            {
+                var mon = Screen.GetMonitorAtWindow(GdkWindow);
+                var geo = Screen.GetMonitorGeometry(mon);
+                if (angle == 0)
+                        distance = geo.Width - 200;
+                else
+                        distance = geo.Height - 200;
+            }
+
             return base.OnKeyPressEvent(e);
         }
 
