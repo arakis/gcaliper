@@ -18,3 +18,5 @@ Documentation
 * Use Shift while rotation to snap to 45° steps
 * Use V key and H key to switch between horizontal and vertical angle.
 * Right click for context menu
+* N key minimizes the application
+* Home key sets the distance to 0 and End key sets the distance to nearly to screen dimension
