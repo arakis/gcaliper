@@ -13,5 +13,8 @@ Documentation
 * Use Arrows to move
 * Use Control+Left/Right to resize
 * Use Shift for bigger steps
-* Use Control while rotation for arbitrary angle
+* You can rotate with Mouse or with R key AND T key.
+* Use Control while rotation for variable angle
+* Use Shift while rotation to snap to 45° steps
+* Use V key and H key to switch between horizontal and vertical angle.
 * Right click for context menu
