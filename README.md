@@ -20,3 +20,5 @@ Documentation
 * Right click for context menu
 * N key minimizes the application
 * Home key sets the distance to 0 and End key sets the distance to nearly to screen dimension
+* C key changes jaw color
+* Control+Q or Control+W quits the application
