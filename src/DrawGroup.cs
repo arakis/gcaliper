@@ -478,7 +478,7 @@ namespace gcaliper
                         tmpAngle -= moveMouseAngleOffset;
                         tmpAngle = normalizeAngle(tmpAngle);
 
-                        if ((evnt.State & ModifierType.ControlMask) == ModifierType.ControlMask)
+                        if ((evnt.State & ModifierType.ControlMask) == ModifierType.ControlMask && (evnt.State & ModifierType.ShiftMask) != ModifierType.ShiftMask)
                         {
                             angle = tmpAngle;
                         }
