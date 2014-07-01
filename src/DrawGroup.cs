@@ -43,7 +43,8 @@ namespace gcaliper
         protected Style originalStyle;
         protected bool needRedraw = true;
         //protected StatusIcon statusIcon;
-        public TDrawGroup() : base(Gtk.WindowType.Toplevel)
+        public TDrawGroup()
+            : base(Gtk.WindowType.Toplevel)
         {
             originalStyle = this.Style.Copy();
             Decorated = false;
@@ -195,10 +196,11 @@ namespace gcaliper
         public int ZeroDistanceOffset;
         // = 15;
         // ***
-        public int minDistanceForRotation = 25;
+        public int minDistanceForRotation = 10;
         public double snapAngle = 0.5;
         private TColor jawColor = AppConfig.jawColor;
         double angle = 0.0174532925 * 0;
+        static double DEG1 = 0.0174532925;
         // ***
         double tmpAngle = 0;
         public RECT unrotatedRect;
@@ -338,8 +340,18 @@ namespace gcaliper
                                 cr.SetFontSize(10);
                                 cr.MoveTo(p.X + 12, p.Y + 27.2);
                                 var text = distance.ToString();
-                                //text += " " + angle.ToString ();
+
                                 cr.ShowText(text);
+
+                                var deg = Math.Round(funcs.RadToDeg(angle));
+
+                                if (deg % 45 != 0)
+                                {
+                                    cr.MoveTo(p.X + 14, p.Y + 40.2);
+                                    text = deg.ToString() + "°";
+                                    cr.ShowText(text);
+                                }
+
                                 cr.Fill();
                             }
                         }
@@ -378,7 +390,7 @@ namespace gcaliper
                     return;
                 value = Math.Max(value, 0);
                 partBottom.rect.X = value + ZeroDistanceOffset;
-                updatePart4();
+                updatePartScale();
                 invalidateImage();
             }
         }
@@ -454,17 +466,13 @@ namespace gcaliper
                     partBottom.rect.X = getDistanceToRotationCenter(rootMousePos);
                     partBottom.rect.X -= moveMouseXOffset;
                     partBottom.rect.X = Math.Max(partBottom.rect.X, ZeroDistanceOffset);
-                    updatePart4();
+                    updatePartScale();
 
                     if (distance > minDistanceForRotation)
                     {
                         tmpAngle = funcs.GetAngleOfLineBetweenTwoPoints(rotationCenterRoot, rootMousePos);
                         tmpAngle -= moveMouseAngleOffset;
-
-                        if (tmpAngle >= Math.PI)
-                            tmpAngle -= Math.PI * 2;
-                        if (tmpAngle <= -Math.PI)
-                            tmpAngle += Math.PI * 2;
+                        tmpAngle = normalizeAngle(tmpAngle);
 
                         if ((evnt.State & ModifierType.ControlMask) == ModifierType.ControlMask)
                         {
@@ -472,14 +480,22 @@ namespace gcaliper
                         }
                         else
                         {
-                            var angleMarkers = new double[]{ 0, Math.PI / 2, Math.PI, -Math.PI, -(Math.PI / 2) };
+                            var snapAngle = this.snapAngle;
+                            double[] angleMarkers;
+                            if ((evnt.State & ModifierType.ShiftMask) == ModifierType.ShiftMask)
+                            {
+                                angleMarkers = new double[]{ 0, Math.PI / 4, Math.PI / 2, Math.PI, Math.PI - Math.PI / 4, -(Math.PI - Math.PI / 4), -(Math.PI / 2), -(Math.PI / 4) };
+                                snapAngle = snapAngle / 2;
+                            }
+                            else
+                                angleMarkers = new double[]{ 0, Math.PI / 2, Math.PI, -Math.PI, -(Math.PI / 2) };
 
                             for (var i = 0; i < angleMarkers.Length; i++)
                             {
                                 var a = angleMarkers[i];
                                 if (tmpAngle <= a + snapAngle && tmpAngle >= a - snapAngle)
                                 {
-                                    angle = a;
+                                    setAngle(a);
                                     break;
                                 }
                             }
@@ -501,7 +517,22 @@ namespace gcaliper
             return base.OnMotionNotifyEvent(evnt);
         }
 
-        private void updatePart4()
+        public double normalizeAngle(double angle)
+        {
+            if (angle >= Math.PI)
+                angle -= Math.PI * 2;
+            if (angle <= -Math.PI)
+                angle += Math.PI * 2;
+            return angle;
+        }
+
+        public void setAngle(double angle)
+        {
+            this.angle = normalizeAngle(angle);
+            invalidateImage();
+        }
+
+        private void updatePartScale()
         {
             partScale.rect.Width = distance;
         }
@@ -571,6 +602,36 @@ namespace gcaliper
                     setWindowPosition(getWindowPosition().add(step, stepY));
                 }
             }
+
+            if (e.Key == Gdk.Key.r || e.Key == Gdk.Key.t || e.Key == Gdk.Key.R || e.Key == Gdk.Key.T)
+            {
+                var angleDistance = Math.PI / 2;
+                if ((e.State & ModifierType.ShiftMask) == ModifierType.ShiftMask)
+                {
+                    angleDistance = Math.PI / 4;
+                }
+                if ((e.State & ModifierType.ControlMask) == ModifierType.ControlMask)
+                {
+                    angleDistance = DEG1;
+                }
+
+                if (e.Key == Gdk.Key.t || e.Key == Gdk.Key.T)
+                {
+                    angleDistance = -angleDistance;
+                }
+
+                setAngle(angle - angleDistance);
+            }
+
+            if (e.Key == Gdk.Key.v)
+            {
+                setAngle(Math.PI / 2);
+            }
+            if (e.Key == Gdk.Key.h)
+            {
+                setAngle(0);
+            }
+
             return base.OnKeyPressEvent(e);
         }
 

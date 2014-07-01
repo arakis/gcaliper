@@ -36,6 +36,12 @@ namespace gcaliper
 {
     public static class funcs
     {
+
+        public static double RadToDeg (double rad)
+        {
+            return 180/Math.PI * rad;
+        }
+
         public static double GetAngleOfLineBetweenTwoPoints(PointF p1, PointF p2)
         {
             double xDiff = p2.X - p1.X;
@@ -357,7 +363,8 @@ namespace gcaliper
 
     public class TCaliperPartHead : TImagePart
     {
-        public TCaliperPartHead() : base(IO.Path.Combine(AppConfig.currThemeDir, "head.png"))
+        public TCaliperPartHead()
+            : base(IO.Path.Combine(AppConfig.currThemeDir, "head.png"))
         {
             rotate = true;
         }
@@ -365,7 +372,8 @@ namespace gcaliper
 
     public class TCaliperPartBottom : TImagePart
     {
-        public TCaliperPartBottom() : base(IO.Path.Combine(AppConfig.currThemeDir, "bottom.png"))
+        public TCaliperPartBottom()
+            : base(IO.Path.Combine(AppConfig.currThemeDir, "bottom.png"))
         {
             rotate = true;
         }
@@ -373,7 +381,8 @@ namespace gcaliper
 
     public class TCaliperPartDisplay : TImagePart
     {
-        public TCaliperPartDisplay() : base(IO.Path.Combine(AppConfig.currThemeDir, "display.png"))
+        public TCaliperPartDisplay()
+            : base(IO.Path.Combine(AppConfig.currThemeDir, "display.png"))
         {
             rotate = false;
             //drawNonrotated = true;
@@ -382,7 +391,8 @@ namespace gcaliper
 
     public class TCaliperPartScale : TImagePart
     {
-        public TCaliperPartScale() : base(IO.Path.Combine(AppConfig.currThemeDir, "scale.png"))
+        public TCaliperPartScale()
+            : base(IO.Path.Combine(AppConfig.currThemeDir, "scale.png"))
         {
             rotate = true;
             //drawNonrotated = true;
