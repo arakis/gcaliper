@@ -579,23 +579,17 @@ namespace gcaliper
 
         protected override bool OnKeyPressEvent(EventKey e)
         {
-            var step = 1;
-            var stepY = 0;
-
-            if ((e.State & ModifierType.ShiftMask) == ModifierType.ShiftMask)
-                step = 20;
 
             if (e.Key == Gdk.Key.Left || e.Key == Gdk.Key.Right || e.Key == Gdk.Key.Up || e.Key == Gdk.Key.Down)
             {
+                var step = 1;
+                var stepY = 0;
+
+                if ((e.State & ModifierType.ShiftMask) == ModifierType.ShiftMask)
+                    step = 20;
 
                 if (e.Key == Gdk.Key.Left || e.Key == Gdk.Key.Up)
                     step = -step;
-
-                if (e.Key == Gdk.Key.Up || e.Key == Gdk.Key.Down)
-                {
-                    stepY = step;
-                    step = 0;
-                }
 
                 if ((e.State & ModifierType.ControlMask) == ModifierType.ControlMask)
                 {
@@ -603,6 +597,12 @@ namespace gcaliper
                 }
                 else
                 {
+                    if (e.Key == Gdk.Key.Up || e.Key == Gdk.Key.Down)
+                    {
+                        stepY = step;
+                        step = 0;
+                    }
+
                     setWindowPosition(getWindowPosition().add(step, stepY));
                 }
             }
