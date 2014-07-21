@@ -1,5 +1,6 @@
 gCaliper
 ========
+[![Coverage Status](https://coveralls.io/repos/Arakis/gcaliper/badge.png)](https://coveralls.io/r/Arakis/gcaliper)
 
 gCaliper is a screen caliper to measure pixel distances, even with variable rotation. The theme is customizable. It requieres Mono / NET 4.0 and GtkSharp 2 and runs on Linux, Mac and Windows.
 
