@@ -219,12 +219,24 @@ namespace gcaliper
 		protected override bool OnConfigureEvent(EventConfigure evnt)
 		{
 			updateRotationCenter();
+			ensureInitialDrawn();
+			return base.OnConfigureEvent(evnt);
+		}
+
+		private void ensureInitialDrawn()
+		{
 			if (!positioned) {
 				needRedraw = false;
 				positioned = true;
 				invalidateImage();
 			}
-			return base.OnConfigureEvent(evnt);
+		}
+
+		protected override void OnShown()
+		{
+			updateRotationCenter();
+			ensureInitialDrawn();
+			base.OnShown();
 		}
 
 		public void generateImage()
@@ -235,9 +247,16 @@ namespace gcaliper
 				using (var cr = new Context(surf)) {
 
 					//Clear
-					cr.Operator = Operator.Clear;
-					cr.Paint();
-					cr.Operator = Operator.Over;
+					if (debug) {
+						cr.SetSourceColor(new Cairo.Color(0, 0.9, 0));
+						cr.Rectangle(0, 0, unrotatedRect.Width, unrotatedRect.Height);
+						cr.Fill();
+					} else {
+						cr.Operator = Operator.Clear;
+						cr.Paint();
+						cr.Operator = Operator.Over;
+					}
+
 
 					foreach (var part in parts) {
 						if (part.rotate) {
@@ -690,14 +709,19 @@ namespace gcaliper
 
 		public bool positioned = false;
 
-		public void redraw(Context cr)
+		public void drawImage(Context cr)
 		{
-
 			if (image != null) {
 				cr.SetSource(image);
 				cr.Rectangle(0, 0, image.Width, image.Height);
 				cr.Fill();
 			}
+		}
+
+		public void redraw(Context cr)
+		{
+			//to avoid flickering
+			drawImage(cr);
 
 			if (!positioned)
 				return;
@@ -708,13 +732,12 @@ namespace gcaliper
 				generateImage();
 				generateMask();
 
-				SetSizeRequest(image.Width, image.Height);
+				//sizing window bigger than screen is requied, because some window managers does not allow positioning windows outside the screen, when they fit
+				SetSizeRequest(Math.Max(image.Width, this.Screen.Width + 10), image.Height);
 
 				setWindowShape();
 
-				cr.SetSource(image);
-				cr.Rectangle(0, 0, image.Width, image.Height);
-				cr.Fill();
+				drawImage(cr);
 
 				updatePosition();
 			} catch (Exception ex) {
