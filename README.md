@@ -25,7 +25,7 @@ Alternatively install it globally:
 ```
 sudo make install
 ```
-For uninstall (use with care):
+For uninstall:
 ```
 sudo rm -f /usr/bin/gcaliper
 sudo rm -rf /usr/share/gcaliper/
