@@ -21,7 +21,7 @@ Launch gcaliper:
 ```
 src/bin/gcaliper.exe
 ```
-Alternatively install it globally (currently, there is no automatic uninstall!):
+Alternatively install it globally:
 ```
 sudo make install
 ```
