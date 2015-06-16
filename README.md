@@ -40,15 +40,15 @@ In the moment i'm looking for help to create a DEB and RPM package.
 Documentation
 =============
 
-* Use Arrow keys to move
-* Use Control+Arrow keys to resize
-* Use Shift for bigger steps
-* You can rotate with Mouse or with R and T key.
-* Use Control while rotation for variable angle
-* Use Shift while rotation to snap to 45° steps
-* Use V key and H key to switch between horizontal and vertical angle.
-* Right click for context menu
-* N key minimizes the application
-* Home key sets the distance to 0 and End key sets the distance to nearly to screen dimension
-* C key changes jaw color
-* Control+Q or Control+W quits the application
+* Use `Arrow keys` to move
+* Use `Control+Arrow` keys to resize
+* Use `Shift` for bigger steps
+* You can rotate with Mouse or with `R` and `T` key.
+* Use `Control` while rotation for variable angle
+* Use `Shift` while rotation to snap to 45° steps
+* Use `V` key and `H` key to switch between horizontal and vertical angle.
+* `Right click` for context menu
+* `N` key minimizes the application
+* `Home` key sets the distance to 0 and `End` key sets the distance to nearly to screen dimension
+* `C` key changes jaw color
+* `Control+Q` or `Control+W` quits the application
