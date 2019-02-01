@@ -37,16 +37,16 @@ namespace gcaliper
     public static class funcs
     {
 
-        public static double RadToDeg (double rad)
+        public static double RadToDeg(double rad)
         {
-            return 180/Math.PI * rad;
+            return 180 / Math.PI * rad;
         }
 
         public static double GetAngleOfLineBetweenTwoPoints(PointF p1, PointF p2)
         {
             double xDiff = p2.X - p1.X;
             double yDiff = p2.Y - p1.Y;
-            return Math.Atan2(yDiff, xDiff); 
+            return Math.Atan2(yDiff, xDiff);
         }
 
         public static POINT add(this POINT p, int x, int y)
@@ -73,7 +73,7 @@ namespace gcaliper
             return new POINT((int)Math.Round(x), (int)Math.Round(y));
         }
 
-        public static POINT  rotatePoint(POINT p, POINT center, double angle)
+        public static POINT rotatePoint(POINT p, POINT center, double angle)
         {
             double s = Math.Sin(angle);
             double c = Math.Cos(angle);
@@ -276,7 +276,7 @@ namespace gcaliper
         }
     }
 
-    public class TPartList: List<TPart>
+    public class TPartList : List<TPart>
     {
         public System.Drawing.Rectangle getRotationRect()
         {
@@ -311,7 +311,7 @@ namespace gcaliper
             var r = rect;
             using (var pat = new SurfacePattern(image))
             {
-                pat.Matrix = new Matrix(){ X0 = -r.X, Y0 = -r.Y };
+                pat.Matrix = new Matrix() { X0 = -r.X, Y0 = -r.Y };
                 pat.Extend = Extend.Repeat;
                 //pat.Matrix = pat.Matrix;
 

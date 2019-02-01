@@ -35,7 +35,7 @@ namespace gcaliper
         // *** Lazy loading flag ***
         private bool m_Lazy = false;
         // *** Local cache ***
-        private Dictionary<string, Dictionary<string, string>> m_Sections = new Dictionary<string,Dictionary<string, string>>();
+        private Dictionary<string, Dictionary<string, string>> m_Sections = new Dictionary<string, Dictionary<string, string>>();
         // *** Local cache modified flag ***
         private bool m_CacheModified = false;
 
@@ -145,7 +145,7 @@ namespace gcaliper
             {
                 // *** If local cache was not modified, exit ***
                 if (!m_CacheModified)
-                    return;				
+                    return;
                 m_CacheModified = false;
 
                 // *** Open the file ***
