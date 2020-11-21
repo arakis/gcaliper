@@ -188,3 +188,5 @@ FakesAssemblies/
 
 .vs/
 packages/
+
+*.zip
