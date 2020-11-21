@@ -64,6 +64,13 @@ namespace gcaliper
                 }
             };
 
+            var aboutItem = new MenuItem("About");
+            Menu.Add(aboutItem);
+            aboutItem.ButtonReleaseEvent += (o, e) =>
+            {
+                Helper.ShowMessage("Author: Sebastian Loncar.\nProject Url: https://github.com/Arakis/gcaliper\nEmail: sebastian.loncar@gmail.com");
+            };
+
             var quitItem = new MenuItem("Quit");
             Menu.Add(quitItem);
             quitItem.ButtonReleaseEvent += (o, e) =>
