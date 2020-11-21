@@ -5,6 +5,14 @@ gCaliper
 
 gCaliper is a screen caliper to measure pixel distances, even with variable rotation. The theme is customizable. It requieres Mono / NET 4.0 and GtkSharp 3 and runs on Linux, Mac and Windows.
 
+Download
+========
+
+You can download a build here:
+https://github.com/arakis/gcaliper/releases
+
+Extract the archive. The executable is called `gcaliper.exe`
+
 Build
 =====
 
