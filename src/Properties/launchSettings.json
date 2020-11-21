@@ -1,10 +1,7 @@
 {
   "profiles": {
     "gcaliper": {
-      "commandName": "Project",
-      "environmentVariables": {
-        "GDK_WIN32_PER_MONITOR_HIDPI ": "1"
-      }
+      "commandName": "Project"
     }
   }
 }
