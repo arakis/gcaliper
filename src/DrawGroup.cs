@@ -6,7 +6,7 @@
   MIT License:
 
   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
-  associated documentation files (the "Software"), to deal in the Software without restriction, 
+  associated documentation files (the "Software"), to deal in the Software without restriction,
   including without limitation the rights to use, copy, modify, merge, publish, distribute,
   sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
   furnished to do so, subject to the following conditions:
@@ -22,8 +22,6 @@
 
 *******************************************************************************************************/
 
-using System.Collections.Generic;
-using System.IO;
 using Gtk;
 using Gdk;
 using Cairo;
@@ -31,19 +29,20 @@ using IO = System.IO;
 
 namespace gcaliper
 {
-    public class TDrawGroup : Gtk.Window
+    public class DrawGroup : Gtk.Window
     {
-        public Cairo.Region maskMap;
-        public ImageSurface image;
-        public TPartList parts = new TPartList();
-        protected Menu menu;
-        protected Style originalStyle;
-        protected bool needRedraw = true;
+        public Cairo.Region MaskMap;
+        public ImageSurface Image;
+        public PartList Parts = new PartList();
+        protected Menu Menu;
+        protected Style OriginalStyle;
+        protected bool NeedRedraw = true;
         //protected StatusIcon statusIcon;
-        public TDrawGroup()
+
+        public DrawGroup()
             : base(Gtk.WindowType.Toplevel)
         {
-            originalStyle = this.Style.Copy();
+            OriginalStyle = Style.Copy();
             Decorated = false;
             Events = EventMask.AllEventsMask;
 
@@ -51,10 +50,10 @@ namespace gcaliper
             //statusIcon.Tooltip = "gcaliper";
             SetIconFromFile(IO.Path.Combine(AppConfig.appRootDir, "appicon.ico"));
 
-            menu = new Menu();
+            Menu = new Menu();
 
             var minItem = new MenuItem("Minimize");
-            menu.Add(minItem);
+            Menu.Add(minItem);
             minItem.ButtonReleaseEvent += (o, e) =>
             {
                 if (e.Event.Button == 1)
@@ -66,22 +65,22 @@ namespace gcaliper
             };
 
             var quitItem = new MenuItem("Quit");
-            menu.Add(quitItem);
+            Menu.Add(quitItem);
             quitItem.ButtonReleaseEvent += (o, e) =>
             {
                 if (e.Event.Button == 1)
                     Application.Quit();
             };
 
-            setWindowShape();
+            SetWindowShape();
         }
 
-        public void invalidateImage()
+        public void InvalidateImage()
         {
-            if (needRedraw)
+            if (NeedRedraw)
                 return;
 
-            needRedraw = true;
+            NeedRedraw = true;
             QueueDraw();
         }
 
@@ -97,18 +96,18 @@ namespace gcaliper
             base.OnHidden();
         }
 
-        public void setWindowShape()
+        public void SetWindowShape()
         {
             //this.ShapeCombineMask(maskMap, 0, 0);
-            ShapeCombineRegion(maskMap);
+            ShapeCombineRegion(MaskMap);
         }
 
-        protected void generateMask()
+        protected void GenerateMask()
         {
-            if (maskMap != null)
-                maskMap.Dispose();
+            if (MaskMap != null)
+                MaskMap.Dispose();
 
-            using (var maskImage = new ImageSurface(Format.Argb32, image.Width, image.Height))
+            using (var maskImage = new ImageSurface(Format.Argb32, Image.Width, Image.Height))
             {
                 using (var cr = new Context(maskImage))
                 {
@@ -117,11 +116,11 @@ namespace gcaliper
                     cr.Paint();
                     cr.Operator = Operator.Source;
 
-                    cr.SetSource(image, 0, 0);
-                    cr.Rectangle(new Cairo.Rectangle(0, 0, image.Width, image.Height));
+                    cr.SetSource(Image, 0, 0);
+                    cr.Rectangle(new Cairo.Rectangle(0, 0, Image.Width, Image.Height));
                     cr.Paint();
                 }
-                maskMap = Gdk.CairoHelper.RegionCreateFromSurface(maskImage);
+                MaskMap = Gdk.CairoHelper.RegionCreateFromSurface(maskImage);
             }
         }
     }

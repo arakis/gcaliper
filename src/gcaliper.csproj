@@ -5,6 +5,12 @@
     <StartupObject>gcaliper.Program</StartupObject>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <Authors>Sebastian Loncar</Authors>
+    <WebPage>https://github.com/Arakis/gcaliper</WebPage>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="GtkSharp" Version="3.22.25.128" />
   </ItemGroup>

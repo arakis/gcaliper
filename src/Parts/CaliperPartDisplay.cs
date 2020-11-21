@@ -1,4 +1,4 @@
-/*******************************************************************************************************
+﻿/*******************************************************************************************************
 
   Copyright (C) Sebastian Loncar, Web: http://loncar.de
   Project: https://github.com/Arakis/gcaliper
@@ -22,40 +22,20 @@
 
 *******************************************************************************************************/
 
-using System;
 using System.IO;
-using Gtk;
 
 namespace gcaliper
 {
-    class Program
+    public class CaliperPartDisplay : ImagePart
     {
-
-        public static void Main(string[] args)
+        public CaliperPartDisplay()
+            : base(Path.Combine(AppConfig.CurrThemeDir, "display.png"))
         {
-            Environment.CurrentDirectory = "/";
-
-            try
-            {
-
-                GLib.ExceptionManager.UnhandledException += (e) =>
-                {
-                    File.AppendAllText("gcaliper.error.log", e.ToString());
-                };
-
-                Application.Init();
-                AppConfig.Init();
-
-                var win = new CaliperGroup();
-                win.Show();
-
-                Application.Run();
-            }
-            catch (Exception e)
-            {
-                File.AppendAllText("gcaliper.error.log", e.ToString());
-            }
+            Rotate = false;
+            //drawNonrotated = true;
         }
-
     }
+
 }
+
+

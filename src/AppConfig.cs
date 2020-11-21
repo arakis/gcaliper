@@ -32,29 +32,29 @@ namespace gcaliper
         public static string appRootDir;
         private static INIFile config;
 
-        public static string themeName { get { return config.GetValue("config", "theme", "caliper"); } set { config.SetValue("config", "theme", value); } }
+        public static string ThemeName { get { return config.GetValue("config", "theme", "caliper"); } set { config.SetValue("config", "theme", value); } }
 
-        public static byte jawColorR { get { return config.GetValue("config", "jawColorR", (byte)150); } set { config.SetValue("config", "jawColorR", value); } }
+        public static byte JawColorR { get { return config.GetValue("config", "jawColorR", (byte)150); } set { config.SetValue("config", "jawColorR", value); } }
 
-        public static byte jawColorG { get { return config.GetValue("config", "jawColorG", (byte)0); } set { config.SetValue("config", "jawColorG", value); } }
+        public static byte JawColorG { get { return config.GetValue("config", "jawColorG", (byte)0); } set { config.SetValue("config", "jawColorG", value); } }
 
-        public static byte jawColorB { get { return config.GetValue("config", "jawColorB", (byte)0); } set { config.SetValue("config", "jawColorB", value); } }
+        public static byte JawColorB { get { return config.GetValue("config", "jawColorB", (byte)0); } set { config.SetValue("config", "jawColorB", value); } }
 
-        public static TColor jawColor
+        public static Color JawColor
         {
             get
             {
-                return new TColor(jawColorR, jawColorG, jawColorB);
+                return new Color(JawColorR, JawColorG, JawColorB);
             }
             set
             {
-                jawColorR = value.r;
-                jawColorG = value.g;
-                jawColorB = value.b;
+                JawColorR = value.R;
+                JawColorG = value.G;
+                JawColorB = value.B;
             }
         }
 
-        public static string themesDir
+        public static string ThemesDir
         {
             get
             {
@@ -62,21 +62,21 @@ namespace gcaliper
             }
         }
 
-        public static string currThemeDir
+        public static string CurrThemeDir
         {
             get
             {
-                return Path.Combine(themesDir, themeName);
+                return Path.Combine(ThemesDir, ThemeName);
             }
         }
 
-        public static void init()
+        public static void Init()
         {
             appRootDir = new DirectoryInfo(Path.GetDirectoryName(typeof(Program).Assembly.Location)).FullName;
             config = new INIFile(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".gcaliper.ini"));
         }
 
-        public static void save()
+        public static void Save()
         {
             config.Flush();
         }

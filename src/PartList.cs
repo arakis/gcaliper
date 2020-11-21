@@ -1,4 +1,4 @@
-/*******************************************************************************************************
+﻿/*******************************************************************************************************
 
   Copyright (C) Sebastian Loncar, Web: http://loncar.de
   Project: https://github.com/Arakis/gcaliper
@@ -6,7 +6,7 @@
   MIT License:
 
   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
-  associated documentation files (the "Software"), to deal in the Software without restriction,
+  associated documentation files (the "Software"), to deal in the Software without restriction, 
   including without limitation the rights to use, copy, modify, merge, publish, distribute,
   sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
   furnished to do so, subject to the following conditions:
@@ -22,40 +22,26 @@
 
 *******************************************************************************************************/
 
-using System;
-using System.IO;
-using Gtk;
+using System.Collections.Generic;
 
 namespace gcaliper
 {
-    class Program
+    public class PartList : List<Part>
     {
-
-        public static void Main(string[] args)
+        public System.Drawing.Rectangle getRotationRect()
         {
-            Environment.CurrentDirectory = "/";
-
-            try
+            var rect = new System.Drawing.Rectangle();
+            foreach (var p in this)
             {
-
-                GLib.ExceptionManager.UnhandledException += (e) =>
+                if (p.Rotate)
                 {
-                    File.AppendAllText("gcaliper.error.log", e.ToString());
-                };
-
-                Application.Init();
-                AppConfig.Init();
-
-                var win = new CaliperGroup();
-                win.Show();
-
-                Application.Run();
+                    rect = System.Drawing.Rectangle.Union(rect, p.Rect);
+                }
             }
-            catch (Exception e)
-            {
-                File.AppendAllText("gcaliper.error.log", e.ToString());
-            }
+            return rect;
         }
-
     }
+
 }
+
+
