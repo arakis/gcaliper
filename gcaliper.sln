@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30717.126
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "gcaliper", "src\gcaliper.csproj", "{969F1325-554F-4C6B-AE63-631880ED6517}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{969F1325-554F-4C6B-AE63-631880ED6517}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{969F1325-554F-4C6B-AE63-631880ED6517}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{969F1325-554F-4C6B-AE63-631880ED6517}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{969F1325-554F-4C6B-AE63-631880ED6517}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4D156C8F-BB01-4377-8DC2-230A79E1BCDE}
+	EndGlobalSection
+EndGlobal

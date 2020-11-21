@@ -6,7 +6,7 @@
   MIT License:
 
   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
-  associated documentation files (the "Software"), to deal in the Software without restriction, 
+  associated documentation files (the "Software"), to deal in the Software without restriction,
   including without limitation the rights to use, copy, modify, merge, publish, distribute,
   sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
   furnished to do so, subject to the following conditions:
@@ -43,36 +43,36 @@ namespace gcaliper
         public static TColor jawColor
         {
             get
-            { 
+            {
                 return new TColor(jawColorR, jawColorG, jawColorB);
             }
             set
             {
-                jawColorR = value.r; 
-                jawColorG = value.g; 
-                jawColorB = value.b; 
+                jawColorR = value.r;
+                jawColorG = value.g;
+                jawColorB = value.b;
             }
         }
 
         public static string themesDir
-        { 
+        {
             get
             {
                 return Path.Combine(appRootDir, "themes");
-            } 
+            }
         }
 
         public static string currThemeDir
-        { 
+        {
             get
             {
                 return Path.Combine(themesDir, themeName);
-            } 
+            }
         }
 
         public static void init()
         {
-            appRootDir = new DirectoryInfo(Path.GetDirectoryName(typeof(Program).Assembly.Location)).Parent.FullName + Path.DirectorySeparatorChar;
+            appRootDir = new DirectoryInfo(Path.GetDirectoryName(typeof(Program).Assembly.Location)).FullName;
             config = new INIFile(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".gcaliper.ini"));
         }
 
