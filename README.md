@@ -7,28 +7,16 @@ gCaliper is a screen caliper to measure pixel distances, even with variable rota
 
 Build
 =====
-You need to install the dependencies. Example for Ubuntu/Debian:
-```
-sudo apt-get install mono-complete gtk-sharp3
-```
-Than:
+
+Clone the repository:
 ```
 git clone https://github.com/Arakis/gcaliper.git
 cd gcaliper
-make
 ```
-Launch gcaliper:
+
+You need the [.NET5 SDK](https://dotnet.microsoft.com/download/dotnet/5.0). Run within the `src` directory:
 ```
-src/bin/gcaliper.exe
-```
-Alternatively install it globally:
-```
-sudo make install
-```
-For uninstall:
-```
-sudo rm -f /usr/bin/gcaliper
-sudo rm -rf /usr/share/gcaliper/
+dotnet build
 ```
 
 If you have any suggestions, please let me know.
