@@ -29,16 +29,16 @@ namespace gcaliper
 {
     public class AppConfig
     {
-        public static string appRootDir;
-        private static INIFile config;
+        public static string AppRootDir;
+        private static INIFile Config;
 
-        public static string ThemeName { get { return config.GetValue("config", "theme", "caliper"); } set { config.SetValue("config", "theme", value); } }
+        public static string ThemeName { get { return Config.GetValue("config", "theme", "caliper"); } set { Config.SetValue("config", "theme", value); } }
 
-        public static byte JawColorR { get { return config.GetValue("config", "jawColorR", (byte)150); } set { config.SetValue("config", "jawColorR", value); } }
+        public static byte JawColorR { get { return Config.GetValue("config", "jawColorR", (byte)150); } set { Config.SetValue("config", "jawColorR", value); } }
 
-        public static byte JawColorG { get { return config.GetValue("config", "jawColorG", (byte)0); } set { config.SetValue("config", "jawColorG", value); } }
+        public static byte JawColorG { get { return Config.GetValue("config", "jawColorG", (byte)0); } set { Config.SetValue("config", "jawColorG", value); } }
 
-        public static byte JawColorB { get { return config.GetValue("config", "jawColorB", (byte)0); } set { config.SetValue("config", "jawColorB", value); } }
+        public static byte JawColorB { get { return Config.GetValue("config", "jawColorB", (byte)0); } set { Config.SetValue("config", "jawColorB", value); } }
 
         public static Color JawColor
         {
@@ -58,7 +58,7 @@ namespace gcaliper
         {
             get
             {
-                return Path.Combine(appRootDir, "themes");
+                return Path.Combine(AppRootDir, "themes");
             }
         }
 
@@ -70,15 +70,15 @@ namespace gcaliper
             }
         }
 
-        public static void Init()
+        static AppConfig()
         {
-            appRootDir = new DirectoryInfo(Path.GetDirectoryName(typeof(Program).Assembly.Location)).FullName;
-            config = new INIFile(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".gcaliper.ini"));
+            AppRootDir = new DirectoryInfo(Path.GetDirectoryName(typeof(Program).Assembly.Location)).FullName;
+            Config = new INIFile(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".gcaliper.ini"));
         }
 
         public static void Save()
         {
-            config.Flush();
+            Config.Flush();
         }
     }
 }

@@ -48,7 +48,7 @@ namespace gcaliper
 
             //statusIcon = new StatusIcon ("../appicon.ico");
             //statusIcon.Tooltip = "gcaliper";
-            SetIconFromFile(IO.Path.Combine(AppConfig.appRootDir, "appicon.ico"));
+            SetIconFromFile(IO.Path.Combine(AppConfig.AppRootDir, "appicon.ico"));
 
             Menu = new Menu();
 

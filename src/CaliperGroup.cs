@@ -88,7 +88,7 @@ namespace gcaliper
         {
             get
             {
-                return IO.Path.Combine(AppConfig.appRootDir, "themes");
+                return IO.Path.Combine(AppConfig.AppRootDir, "themes");
             }
         }
 

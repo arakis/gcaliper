@@ -33,7 +33,7 @@ namespace gcaliper
 
         public static void Main(string[] args)
         {
-            Environment.CurrentDirectory = "/";
+            Environment.CurrentDirectory = AppConfig.AppRootDir;
 
             try
             {
@@ -44,7 +44,6 @@ namespace gcaliper
                 };
 
                 Application.Init();
-                AppConfig.Init();
 
                 var win = new CaliperGroup();
                 win.Show();
