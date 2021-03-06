@@ -1,8 +1,10 @@
-dotnet publish -c Release -r win-x64
-dotnet publish -c Release -r linux-x64
+rm -Force -ErrorAction SilentlyContinue GCaliper-Win-x64.zip
+rm -Force -ErrorAction SilentlyContinue GCaliper-Linux-x64.zip
 
-rm GCaliper-Win-x64.zip
-rm GCaliper-Linux-x64.zip
+Remove-Item -Recurse -Force -ErrorAction SilentlyContinue src/bin/Release
+
+dotnet publish -c Release -r win-x64 /p:PublishWindows=true
+dotnet publish -c Release -r linux-x64
 
 $compress = @{
     Path = "src\bin\Release\net5.0\win-x64\publish\*"

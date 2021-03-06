@@ -35,6 +35,15 @@ namespace gcaliper
         {
             Environment.CurrentDirectory = AppConfig.AppRootDir;
 
+            var platform = Environment.OSVersion.Platform;
+            if (platform == PlatformID.Win32NT)
+            {
+                var appDir = AppDomain.CurrentDomain.BaseDirectory;
+                var dllDir = Path.Combine(appDir, "bin");
+                var path = Environment.GetEnvironmentVariable("path");
+                Environment.SetEnvironmentVariable("path", path + ";" + dllDir);
+            }
+
             try
             {
 
