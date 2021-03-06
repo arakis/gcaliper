@@ -1,10 +1,10 @@
-name: Tests
+name: Build
 # This workflow is triggered on pushes to the repository.
 on: [push]
 
 jobs:
   build-unix:
-    name: Linux Test
+    name: Linux Build
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@master
