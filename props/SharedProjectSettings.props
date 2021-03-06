@@ -1,0 +1,53 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <!--<CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)default.ruleset</CodeAnalysisRuleSet>-->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeQuality.Analyzers">
+      <Version>3.3.1</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NetFramework.Analyzers">
+      <Version>3.3.1</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers">
+      <Version>3.3.1</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="StyleCop.Analyzers">
+      <Version>1.2.0-beta.164</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+
+    <PackageReference Include="Serilog" Version="2.10.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
+    <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <AximoStylecopPath Condition="$(AximoStylecopPath)=='' And Exists('$(MSBuildProjectDirectory)\stylecop.json')">$(MSBuildProjectDirectory)</AximoStylecopPath>
+    <AximoStylecopPath Condition="$(AximoStylecopPath)=='' And Exists('$(MSBuildProjectDirectory)\props\stylecop.json')">$(MSBuildProjectDirectory)\props</AximoStylecopPath>
+    <AximoStylecopPath Condition="$(AximoStylecopPath)=='' And Exists('$(MSBuildProjectDirectory)\..\props\stylecop.json')">$(MSBuildProjectDirectory)\..\props</AximoStylecopPath>
+    <AximoStylecopPath Condition="$(AximoStylecopPath)=='' And Exists('$(MSBuildProjectDirectory)\..\..\props\stylecop.json')">$(MSBuildProjectDirectory)\..\..\props</AximoStylecopPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Condition="$(AximoStylecopPath) != ''" Include="$(AximoStylecopPath)\stylecop.json" Link="stylecop.json" />
+  </ItemGroup>
+
+  <Target Name="DisableAnalyzers"
+      BeforeTargets="CoreCompile"
+      Condition="'$(UseRoslynAnalyzers)' == 'false' or '$(RunCodeAnalysis)' == 'false' or '$(RunCodeAnalysis)' == 'never'" >
+    <!--  Disable analyzers via an MSBuild property settable on the command line. -->
+    <ItemGroup>
+      <Analyzer Remove="@(Analyzer)" />
+    </ItemGroup>
+  </Target>
+
+</Project>

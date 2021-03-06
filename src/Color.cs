@@ -52,13 +52,13 @@ namespace gcaliper
 
         public Color(Gdk.Color c)
         {
-            R = (byte)Math.Round((byte.MaxValue / (double)ushort.MaxValue * c.Red), 0);
-            G = (byte)Math.Round((byte.MaxValue / (double)ushort.MaxValue * c.Green), 0);
-            B = (byte)Math.Round((byte.MaxValue / (double)ushort.MaxValue * c.Blue), 0);
+            R = (byte)Math.Round(byte.MaxValue / (double)ushort.MaxValue * c.Red, 0);
+            G = (byte)Math.Round(byte.MaxValue / (double)ushort.MaxValue * c.Green, 0);
+            B = (byte)Math.Round(byte.MaxValue / (double)ushort.MaxValue * c.Blue, 0);
             A = 255;
         }
 
-        public unsafe static Color FromArgbPointer(IntPtr ptr)
+        public static unsafe Color FromArgbPointer(IntPtr ptr)
         {
             var c = new Color();
             byte* pix = (byte*)ptr;
@@ -69,7 +69,7 @@ namespace gcaliper
             return c;
         }
 
-        public unsafe static Color FromArgbPointer2(IntPtr ptr)
+        public static unsafe Color FromArgbPointer2(IntPtr ptr)
         {
             var c = new Color();
             byte* pix = (byte*)ptr;
@@ -80,7 +80,7 @@ namespace gcaliper
             return c;
         }
 
-        public unsafe static Color FromRgbPointer(IntPtr ptr)
+        public static unsafe Color FromRgbPointer(IntPtr ptr)
         {
             var c = new Color();
             byte* pix = (byte*)ptr;
@@ -92,5 +92,3 @@ namespace gcaliper
     }
 
 }
-
-

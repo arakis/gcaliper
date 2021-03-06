@@ -27,7 +27,7 @@ using System.IO;
 
 namespace gcaliper
 {
-    public class AppConfig
+    public static class AppConfig
     {
         public static string AppRootDir;
         private static INIFile Config;
@@ -82,4 +82,3 @@ namespace gcaliper
         }
     }
 }
-

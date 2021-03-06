@@ -23,8 +23,8 @@
 *******************************************************************************************************/
 
 using System;
-using Gtk;
 using System.Drawing;
+using Gtk;
 using POINT = System.Drawing.Point;
 using RECT = System.Drawing.Rectangle;
 
@@ -57,8 +57,8 @@ namespace gcaliper
 
         public static PointF RotatePoint(PointF p, PointF center, double angle)
         {
-            var x = Math.Cos(angle) * (p.X - center.X) - Math.Sin(angle) * (p.Y - center.Y) + center.X;
-            var y = Math.Sin(angle) * (p.X - center.X) + Math.Cos(angle) * (p.Y - center.Y) + center.Y;
+            var x = (Math.Cos(angle) * (p.X - center.X)) - (Math.Sin(angle) * (p.Y - center.Y)) + center.X;
+            var y = (Math.Sin(angle) * (p.X - center.X)) + (Math.Cos(angle) * (p.Y - center.Y)) + center.Y;
             return new PointF((float)x, (float)y);
         }
 
@@ -72,8 +72,8 @@ namespace gcaliper
             p.Y -= center.Y;
 
             // rotate point
-            double xnew = p.X * c - p.Y * s;
-            double ynew = p.X * s + p.Y * c;
+            double xnew = (p.X * c) - (p.Y * s);
+            double ynew = (p.X * s) + (p.Y * c);
 
             // translate point back:
             p.X = (int)Math.Round(xnew + center.X);
@@ -105,5 +105,3 @@ namespace gcaliper
     }
 
 }
-
-

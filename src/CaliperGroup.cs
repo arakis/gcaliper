@@ -23,12 +23,12 @@
 *******************************************************************************************************/
 
 using System;
-using Gtk;
-using Gdk;
 using Cairo;
+using Gdk;
+using Gtk;
+using IO = System.IO;
 using POINT = System.Drawing.Point;
 using RECT = System.Drawing.Rectangle;
-using IO = System.IO;
 
 namespace gcaliper
 {
@@ -113,10 +113,10 @@ namespace gcaliper
         public int MinDistanceForRotation = 10;
         public double SnapAngle = 0.5;
         private Color JawColor = AppConfig.JawColor;
-        double Angle = 0.0174532925 * 0;
-        static double DEG1 = 0.0174532925;
+        private double Angle = 0.0174532925 * 0;
+        private static double DEG1 = 0.0174532925;
         // ***
-        double TmpAngle = 0;
+        private double TmpAngle;
         public RECT UnrotatedRect;
         public RECT RotatedRect;
         public POINT RotationCenterRoot;
@@ -159,9 +159,9 @@ namespace gcaliper
 
         public void GenerateImage()
         {
-            UnrotatedRect = Parts.getRotationRect();
+            UnrotatedRect = Parts.GetRotationRect();
 
-            using (var surf = new Cairo.ImageSurface(Format.ARGB32, UnrotatedRect.Width, UnrotatedRect.Height))
+            using (var surf = new ImageSurface(Format.ARGB32, UnrotatedRect.Width, UnrotatedRect.Height))
             {
                 using (var cr = new Context(surf))
                 {
@@ -180,14 +180,13 @@ namespace gcaliper
                         cr.Operator = Operator.Over;
                     }
 
-
                     foreach (var part in Parts)
                     {
                         if (part.Rotate)
                         {
                             //Draw image
 
-                            part.draw(cr);
+                            part.Draw(cr);
                         }
                     }
 
@@ -209,7 +208,7 @@ namespace gcaliper
                 RotatedRect = Helper.RotateRect(UnrotatedRect, RotationCenterZero, Angle);
 
                 //Rotate
-                var surf2 = new Cairo.ImageSurface(Format.ARGB32, RotatedRect.Width, RotatedRect.Height);
+                var surf2 = new ImageSurface(Format.ARGB32, RotatedRect.Width, RotatedRect.Height);
                 using (var cr = new Context(surf2))
                 {
                     cr.Operator = Operator.Clear;
@@ -331,7 +330,7 @@ namespace gcaliper
             }
         }
 
-        public bool Debug = false;
+        public bool Debug;
         private string _DebugText;
 
         public string DebugText
@@ -356,8 +355,8 @@ namespace gcaliper
         private POINT StartRectPos;
         private POINT StartWinPos;
         private POINT MouseImagePos;
-        private bool Resizing = false;
-        private bool Moving = false;
+        private bool Resizing;
+        private bool Moving;
         private POINT DebugPoint = new POINT(10, 10);
         private double MoveMouseAngleOffset;
         private int MoveMouseXOffset;
@@ -421,20 +420,23 @@ namespace gcaliper
                             double[] angleMarkers;
                             if ((evnt.State & ModifierType.ShiftMask) == ModifierType.ShiftMask)
                             {
-                                angleMarkers = new double[] {
+                                angleMarkers = new double[]
+                                {
                                     0,
                                     Math.PI / 4,
                                     Math.PI / 2,
                                     Math.PI,
-                                    Math.PI - Math.PI / 4,
-                                    -(Math.PI - Math.PI / 4),
+                                    Math.PI - (Math.PI / 4),
+                                    -(Math.PI - (Math.PI / 4)),
                                     -(Math.PI / 2),
-                                    -(Math.PI / 4)
+                                    -(Math.PI / 4),
                                 };
                                 snapAngle = snapAngle / 2;
                             }
                             else
+                            {
                                 angleMarkers = new double[] { 0, Math.PI / 2, Math.PI, -Math.PI, -(Math.PI / 2) };
+                            }
 
                             for (var i = 0; i < angleMarkers.Length; i++)
                             {
@@ -454,8 +456,8 @@ namespace gcaliper
 
             if (Moving)
             {
-                var x = (StartWinPos.X + (RootMousePos.X - StartRootMousePos.X));
-                var y = (StartWinPos.Y + (RootMousePos.Y - StartRootMousePos.Y));
+                var x = StartWinPos.X + (RootMousePos.X - StartRootMousePos.X);
+                var y = StartWinPos.Y + (RootMousePos.Y - StartRootMousePos.Y);
                 Move(x, y);
                 UpdateRotationCenter();
             }
@@ -545,7 +547,7 @@ namespace gcaliper
                         step = 0;
                     }
 
-                    setWindowPosition(GetWindowPosition().Add(step, stepY));
+                    SetWindowPosition(GetWindowPosition().Add(step, stepY));
                 }
             }
 
@@ -618,7 +620,7 @@ namespace gcaliper
             return new POINT(x, y);
         }
 
-        private void setWindowPosition(POINT p)
+        private void SetWindowPosition(POINT p)
         {
             Move(p.X, p.Y);
         }
@@ -680,7 +682,7 @@ namespace gcaliper
             return p;
         }
 
-        public bool Positioned = false;
+        public bool Positioned;
 
         public void DrawImage(Context cr)
         {

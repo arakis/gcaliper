@@ -23,8 +23,8 @@
 *******************************************************************************************************/
 
 using System;
-using Gdk;
 using Cairo;
+using Gdk;
 
 namespace gcaliper
 {
@@ -33,72 +33,62 @@ namespace gcaliper
         public static Color GetPixel(this Pixbuf buf, int x, int y)
         {
             if (buf.NChannels == 4)
-                return Color.FromArgbPointer(buf.Pixels + y * buf.Rowstride + x * buf.NChannels);
+                return Color.FromArgbPointer(buf.Pixels + (y * buf.Rowstride) + (x * buf.NChannels));
             if (buf.NChannels == 3)
-                return Color.FromRgbPointer(buf.Pixels + y * buf.Rowstride + x * buf.NChannels);
+                return Color.FromRgbPointer(buf.Pixels + (y * buf.Rowstride) + (x * buf.NChannels));
 
             throw new NotSupportedException();
         }
 
-        public unsafe static uint GetPixelUInt(this Pixbuf buf, int x, int y)
+        public static unsafe uint GetPixelUInt(this Pixbuf buf, int x, int y)
         {
             if (buf.NChannels == 4)
-                return *((uint*)(buf.Pixels + y * buf.Rowstride + x * buf.NChannels));
+                return *(uint*)(buf.Pixels + (y * buf.Rowstride) + (x * buf.NChannels));
 
             throw new NotSupportedException();
         }
 
-        public unsafe static uint GetPixelUInt(this ImageSurface buf, int x, int y)
+        public static unsafe uint GetPixelUInt(this ImageSurface buf, int x, int y)
         {
             var color = GetBgraPixelUInt(buf, x, y);
-            /*
-			byte a = (byte)(color >> 24);
-			byte r = (byte)(color >> 16);
-			byte g = (byte)(color >> 8);
-			byte b = (byte)(color >> 0);
-*/
 
             byte a = (byte)(color >> 24);
             byte r = (byte)(color >> 16);
             byte g = (byte)(color >> 8);
             byte b = (byte)(color >> 0);
 
-            //var gg = (a << 16);
-
             return (uint)((a << 24) | (b << 16) | (g << 8) | (r << 0));
 
         }
 
-        public unsafe static uint GetBgraPixelUInt(this ImageSurface buf, int x, int y)
+        public static unsafe uint GetBgraPixelUInt(this ImageSurface buf, int x, int y)
         {
             if (buf.Format == Format.Argb32)
-                return *((uint*)(buf.DataPtr + y * buf.Stride + x * 4));
+                return *(uint*)(buf.DataPtr + (y * buf.Stride) + (x * 4));
             if (buf.Format == Format.Rgb24)
-                return *((uint*)(buf.DataPtr + y * buf.Stride + x * 3));
+                return *(uint*)(buf.DataPtr + (y * buf.Stride) + (x * 3));
             throw new NotSupportedException();
         }
 
-        public unsafe static Color GetPixel(this ImageSurface buf, int x, int y)
+        public static unsafe Color GetPixel(this ImageSurface buf, int x, int y)
         {
 
             if (buf.Format == Format.Argb32)
             {
-                var ptr = buf.DataPtr + y * buf.Stride + x * 4;
-
-
+                var ptr = buf.DataPtr + (y * buf.Stride) + (x * 4);
                 return Color.FromArgbPointer2(ptr);
             }
 
             throw new NotSupportedException();
         }
 
-        public unsafe static void SetPixel(this ImageSurface buf, int x, int y, Color c)
+        public static unsafe void SetPixel(this ImageSurface buf, int x, int y, Color c)
         {
 
             if (buf.Format == Format.Argb32)
             {
-                byte* pix = (byte*)(buf.DataPtr + y * buf.Stride + x * 4);
-                *(pix) = c.B;
+                byte* pix = (byte*)(buf.DataPtr + (y * buf.Stride) + (x * 4));
+                *pix = c.B;
                 *(pix + 1) = c.G;
                 *(pix + 2) = c.R;
                 *(pix + 3) = c.A;
@@ -108,23 +98,21 @@ namespace gcaliper
             throw new NotSupportedException();
         }
 
-        public unsafe static void SetPixel(this Pixbuf buf, int x, int y, Color color)
+        public static unsafe void SetPixel(this Pixbuf buf, int x, int y, Color color)
         {
-            byte* pix = (byte*)(buf.Pixels + y * buf.Rowstride + x * buf.NChannels);
-            *(pix) = color.R;
+            byte* pix = (byte*)(buf.Pixels + (y * buf.Rowstride) + (x * buf.NChannels));
+            *pix = color.R;
             *(pix + 1) = color.G;
             *(pix + 2) = color.B;
             if (buf.NChannels == 4)
                 *(pix + 3) = color.A;
         }
 
-        public unsafe static void SetPixel(this Pixbuf buf, int x, int y, uint argbcolor)
+        public static unsafe void SetPixel(this Pixbuf buf, int x, int y, uint argbcolor)
         {
-            uint* pix = (uint*)(buf.Pixels + y * buf.Rowstride + x * buf.NChannels);
-            *(pix) = argbcolor;
+            uint* pix = (uint*)(buf.Pixels + (y * buf.Rowstride) + (x * buf.NChannels));
+            *pix = argbcolor;
         }
     }
 
 }
-
-

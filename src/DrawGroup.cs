@@ -22,9 +22,9 @@
 
 *******************************************************************************************************/
 
-using Gtk;
-using Gdk;
 using Cairo;
+using Gdk;
+using Gtk;
 using IO = System.IO;
 
 namespace gcaliper
