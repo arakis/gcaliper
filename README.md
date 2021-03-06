@@ -11,7 +11,7 @@ Download
 ========
 
 You can download a build here:
-https://github.com/arakis/gcaliper/releases
+https://github.com/arakis/gcaliper/releases/latest
 
 Extract the archive. The executable is called `gcaliper.exe`
 
