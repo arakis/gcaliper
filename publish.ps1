@@ -6,6 +6,9 @@ Remove-Item -Recurse -Force -ErrorAction SilentlyContinue src/bin/Release
 dotnet publish -c Release -r win-x64 /p:PublishWindows=true
 dotnet publish -c Release -r linux-x64
 
+#set version=1.1.2
+& "C:\Program Files (x86)\Inno Setup 6\iscc.exe" contrib/win/gcaliper.iss /DMyConfiguration=Release /DMyConfiguration=Release /DMyAppVersion=1.1.2
+
 $compress = @{
     Path = "src\bin\Release\net5.0\win-x64\publish\*"
     CompressionLevel = "Optimal"
