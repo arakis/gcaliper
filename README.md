@@ -1,3 +1,5 @@
+![License](https://img.shields.io/badge/license-MIT-blue.svg) [![Actions Status](https://github.com/arakis/gcaliper/workflows/Tests/badge.svg)](https://github.com/arakis/gcaliper/actions)
+
 gCaliper
 ========
 
