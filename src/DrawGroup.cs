@@ -37,7 +37,6 @@ namespace gcaliper
         protected Menu Menu;
         protected Style OriginalStyle;
         protected bool NeedRedraw = true;
-        //protected StatusIcon statusIcon;
 
         public DrawGroup()
             : base(Gtk.WindowType.Toplevel)
@@ -46,8 +45,6 @@ namespace gcaliper
             Decorated = false;
             Events = EventMask.AllEventsMask;
 
-            //statusIcon = new StatusIcon ("../appicon.ico");
-            //statusIcon.Tooltip = "gcaliper";
             SetIconFromFile(IO.Path.Combine(AppConfig.AppRootDir, "appicon.ico"));
 
             Menu = new Menu();
@@ -57,11 +54,7 @@ namespace gcaliper
             minItem.ButtonReleaseEvent += (o, e) =>
             {
                 if (e.Event.Button == 1)
-                {
                     Iconify();
-                    //statusIcon.Visible=true;
-                    //Hide();
-                }
             };
 
             var aboutItem = new MenuItem("About");
@@ -105,7 +98,6 @@ namespace gcaliper
 
         public void SetWindowShape()
         {
-            //this.ShapeCombineMask(maskMap, 0, 0);
             ShapeCombineRegion(MaskMap);
         }
 

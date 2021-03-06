@@ -731,12 +731,5 @@ namespace gcaliper
             return true;
         }
 
-        //        protected override bool OnExposeEvent(EventExpose evnt)
-        //        {
-        //            if (needRedraw)
-        //                redraw();
-        //
-        //            return base.OnExposeEvent(evnt);
-        //        }
     }
 }

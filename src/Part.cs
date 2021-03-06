@@ -34,11 +34,7 @@ namespace gcaliper
 
         public ImageSurface Image;
         public bool Rotate;
-        //public bool drawNonrotated=false;
-        //public PointD rotationCenter;
-        //public double rotationAngle;
         public System.Drawing.Rectangle Rect;
-        //public System.Drawing.Rectangle rotatedRect;
 
         public virtual void Draw(Context cr)
         {
@@ -47,7 +43,6 @@ namespace gcaliper
             {
                 pat.Matrix = new Matrix() { X0 = -r.X, Y0 = -r.Y };
                 pat.Extend = Extend.Repeat;
-                //pat.Matrix = pat.Matrix;
 
                 cr.SetSource(pat);
                 cr.Rectangle(new Rectangle(r.X, r.Y, r.Width, r.Height));

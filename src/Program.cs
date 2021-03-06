@@ -35,6 +35,7 @@ namespace gcaliper
         {
             Environment.CurrentDirectory = AppConfig.AppRootDir;
 
+            // include GTK runtime
             var platform = Environment.OSVersion.Platform;
             if (platform == PlatformID.Win32NT)
             {
