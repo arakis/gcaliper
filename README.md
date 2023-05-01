@@ -24,7 +24,7 @@ git clone https://github.com/Arakis/gcaliper.git
 cd gcaliper
 ```
 
-You need the [.NET7 SDK](https://dotnet.microsoft.com/download/dotnet/5.0). Run within the `src` directory:
+You need the [.NET7 SDK](https://dotnet.microsoft.com/download/dotnet/7.0). Run within the `src` directory:
 ```
 dotnet build
 ```
