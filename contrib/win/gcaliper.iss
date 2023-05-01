@@ -42,7 +42,7 @@ ArchitecturesInstallIn64BitMode=x64
 ; Name: "german"; MessagesFile: "compiler:Languages\German.isl"
 
 [Files]
-Source: "..\..\src\bin\{#MyConfiguration}\net5.0\win-x64\publish\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\src\bin\{#MyConfiguration}\net7.0\win-x64\publish\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
